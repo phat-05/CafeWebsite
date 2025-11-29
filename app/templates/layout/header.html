@@ -1,0 +1,35 @@
+<nav class="navbar sticky-top navbar-expand-sm navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <img alt="logo" class="rounded-pill"
+                 src="../../static/images/logo.png" style="width:40px;">
+        </a>
+        <button class="navbar-toggler" data-bs-target="#mynavbar" data-bs-toggle="collapse" type="button">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mynavbar">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/">Trang chủ</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/menu">Thực đơn</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/about-us">Về chúng tôi</a>
+                </li>
+            </ul>
+            <div class="navbar-nav">
+                    <a class="nav-link active" href="/about-us">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                        Đăng nhập
+                    </a>
+
+                    <a class="btn text-white position-relative" href="/about-us">
+                        <i class="bi bi-bag"></i>
+                        <span id="cart-bagde" class="badge bg-danger position-absolute rounded-pill top-0 end-0">0</span>
+                    </a>
+            </div>
+        </div>
+    </div>
+</nav>
