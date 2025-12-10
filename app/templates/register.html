@@ -1,0 +1,52 @@
+{% extends 'login.html' %}
+{% block title %}Trang Đăng Ký{% endblock %}
+{% block content %}
+<div class="position-absolute col-7 min-vh-100 bg-dark start-0 opacity-50 z-n1"></div>
+<div class="col-7 p-5 text-white shadow">
+    <h1 class="fw-bold display-5">Tạo tài khoản,<br>nhận ngay hương vị☕️</h1>
+    <p class="mt-3 fs-5">
+        Lưu đơn, tích điểm, nhận ưu đãi độc quyền và lời mời sự kiện nếm thử. <br>
+        Chỉ mất vài giây, một tách cà phê ngon đang chờ bạn.
+    </p>
+</div>
+<div class="bg-body position-absolute vh-100 d-flex align-items-center justify-content-center col-5 p-5 end-0">
+    <form class="row g-3">
+        <h1 class="col-12 text-center mb-5 fw-bolder fs-1">Trang Đăng Ký</h1>
+        <div class="col-6">
+            <label for="inputLastName" class="form-label">Họ</label>
+            <input id="inputLastName" type="text" class="form-control">
+        </div>
+        <div class="col-6">
+            <label for="inputFirstName" class="form-label">Tên</label>
+            <input id="inputFirstName" type="text" class="form-control">
+        </div>
+        <dv class="col-12">
+            <label for="inputEmail1" class="form-label">Email</label>
+            <input type="email" class="form-control" id="inputEmail1">
+        </dv>
+        <div class="col-12">
+            <label for="inputPassword1" class="form-label">Mật Khẩu</label>
+            <input type="password" class="form-control" id="inputPassword1">
+        </div>
+        <div class="col-12">
+            <label for="inputPassword2" class="form-label">Nhập Lại Mật Khẩu</label>
+            <input type="password" class="form-control" id="inputPassword2">
+        </div>
+        <div class="col-12 text-center mt-5">
+            <button type="submit" class="btn btn-primary">Đăng Ký</button>
+        </div>
+        <div class="col-12 text-center mt-5">
+            <p class="text-secondary">Bạn đã có tài khoản? <a href="/login" class="link-secondary">Đăng Nhập</a></p>
+        </div>
+        <div class="col-12">
+            <p class="text-center">
+                <a href="/" class="link-secondary">Trang chủ</a>
+                <i class="bi bi-link"></i>
+                <a href="/menu" class="link-secondary">Thực đơn</a>
+                <i class="bi bi-link"></i>
+                <a href="/about-us" class="link-secondary">Về chúng tôi</a>
+            </p>
+        </div>
+    </form>
+</div>
+{% endblock %}

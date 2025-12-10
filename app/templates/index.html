@@ -40,6 +40,53 @@
 </div>
 
 <!-- Hiển thị sản phẩm bán chạy -->
+<h1 class="text-center mt-5 fw-bolder">
+    <i class="bi bi-fire text-danger"></i>
+    Sản phẩm bán chạy của tháng
+    <i class="bi bi-fire text-danger"></i>
+</h1>
+<div class="text-center">
+    {% for i in range(10) %}
+    <i class="bi bi-cup-straw"></i> -
+    <i class="bi bi-heart"></i> -
+    {% endfor %}
+    <i class="bi bi-cup-straw"></i>
+</div>
+<div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        {% for start in range(0, 50, 4) %}
+        <div class="carousel-item {% if loop.first %}active{% endif %} p-4 p">
+            <div class="row g-3 justify-content-start">
 
+                {% for i in range(start, start + 4) %}
+                {% if i < 50 %}
+                <div class="col-12 col-md-6 col-lg-3 p-4 ">
+                    <div class="card h-100 rounded-5">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-00cicjGoOhT9L6ZW3kmc0RX5L4P_plVZAA&s"
+                             class="card-img-top rounded-top-5" alt="...">
+                        <div class="card-body d-flex flex-column p-4">
+                            <h5 class="card-title">Iced Caramel Machiato</h5>
+                            <p class="card-text">39.000.000đ</p>
+                            <a href="#" class="btn btn-danger mt-auto w-100 rounded-5">Mua hàng</a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying"
+            data-bs-slide="prev">
+        <i class="bi bi-chevron-left fs-1 text-dark"></i>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying"
+            data-bs-slide="next">
+        <i class="bi bi-chevron-right fs-1 text-dark"></i>
+    </button>
+</div>
 
 {% endblock %}
