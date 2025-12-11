@@ -28,13 +28,13 @@
 <div class="bg-body position-absolute vh-100 d-flex align-items-center justify-content-center col-5 p-5 end-0">
     <form class="row g-3">
         <h1 class="col-12 text-center mb-5 fw-bolder fs-1">Trang Đăng Nhập</h1>
-        <div class="col-12">
-            <label for="inputEmail" class="form-label">Email</label>
-            <input type="email" class="form-control" id="inputEmail">
+        <div class="form-floating mb-3">
+            <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+            <label for="floatingInput" ><i class="bi bi-envelope"></i> Email</label>
         </div>
-        <div class="col-12">
-            <label for="inputPassword" class="form-label">Mật khẩu</label>
-            <input type="password" class="form-control" id="inputPassword">
+        <div class="form-floating">
+            <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+            <label for="floatingPassword" ><i class="bi bi-lock"></i> Mật khẩu</label>
         </div>
         <div class="col-6">
             <div class="form-check">

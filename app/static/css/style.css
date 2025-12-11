@@ -17,3 +17,27 @@ body.login {
 h1, h2, h3 {
     font-family: "Playfair Display", serif;
 }
+
+.menu-decor {
+    background-image: url('https://leafteashop.co.uk/wp-content/uploads/2023/12/Cafe-Menu.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.list-group-item.active {
+    background-color: #212529 !important;
+    border: #212529 !important;
+}
+
+.list-group-item {
+    height: 15vh;
+}
+
+.password-toggle {
+    cursor: pointer;
+}
+
+/*test*/
+.form-floating > label {
+    left: 0.5rem !important;
+}

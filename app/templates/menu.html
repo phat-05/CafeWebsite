@@ -1,3 +1,126 @@
 {% extends 'layout/base.html' %}
 
-{% block title %}Thực đơn{% endblock %}
+{% block title %}Thực đơn | HaiLan Cafe{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
+
+<div class="menu-header container py-4">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <h2 class="fw-bold">THỰC ĐƠN</h2>
+        </div>
+        <div class="col-md-6">
+            <form class="d-flex">
+                <input class="form-control me-2" type="search" placeholder="Nhập từ khoá...">
+                <button class="btn btn-dark" type="submit">
+                    <i class="bi bi-search"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="container menu-container">
+    <div class="row g-4">
+
+        <!-- SIDEBAR -->
+        <div class="col-md-3">
+            <div class="menu-sidebar p-3">
+                <div class="list-group" id="menu-list">
+                    <a href="#ca-phe" class="list-group-item list-group-item-action">Cà phê</a>
+                    <a href="#tra" class="list-group-item list-group-item-action">Trà</a>
+                    <a href="#nuoc-ep" class="list-group-item list-group-item-action">Nước ép</a>
+                    <a href="#banh-ngot" class="list-group-item list-group-item-action">Bánh ngọt</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="col-md-9">
+
+            <!-- Cà phê -->
+            <section id="ca-phe" class="mb-5">
+                <h3 class="section-title">Cà phê</h3>
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    {% for i in range(6) %}
+                    <div class="col">
+                        <div class="card product-card">
+                            <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93"
+                                 class="card-img-top">
+                            <div class="card-body">
+                                <h5 class="card-title">Americano</h5>
+                                <p class="price">39.000đ</p>
+                                <a href="#" class="btn btn-danger w-100 rounded-pill">Mua hàng</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <!-- Trà -->
+            <section id="tra" class="mb-5">
+                <h3 class="section-title">Trà</h3>
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    {% for i in range(6) %}
+                    <div class="col">
+                        <div class="card product-card">
+                            <img src="https://images.unsplash.com/photo-1523906834658-6e24ef2386f9"
+                                 class="card-img-top">
+                            <div class="card-body">
+                                <h5 class="card-title">Trà đào</h5>
+                                <p class="price">45.000đ</p>
+                                <a href="#" class="btn btn-danger w-100 rounded-pill">Mua hàng</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <!-- Nước ép -->
+            <section id="nuoc-ep" class="mb-5">
+                <h3 class="section-title">Nước ép</h3>
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    {% for i in range(6) %}
+                    <div class="col">
+                        <div class="card product-card">
+                            <img src="https://images.unsplash.com/photo-1553531384-cc64ac80f931"
+                                 class="card-img-top">
+                            <div class="card-body">
+                                <h5 class="card-title">Nước ép cam</h5>
+                                <p class="price">40.000đ</p>
+                                <a href="#" class="btn btn-danger w-100 rounded-pill">Mua hàng</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <!-- Bánh ngọt -->
+            <section id="banh-ngot" class="mb-5">
+                <h3 class="section-title">Bánh ngọt</h3>
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    {% for i in range(6) %}
+                    <div class="col">
+                        <div class="card product-card">
+                            <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836"
+                                 class="card-img-top">
+                            <div class="card-body">
+                                <h5 class="card-title">Croissant</h5>
+                                <p class="price">29.000đ</p>
+                                <a href="#" class="btn btn-danger w-100 rounded-pill">Mua hàng</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
