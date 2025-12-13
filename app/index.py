@@ -1,7 +1,7 @@
 import json
-from flask import Flask, render_template
+from flask import render_template
 
-app = Flask(__name__)
+from app import app,dao
 
 @app.route('/')
 def index():
@@ -11,7 +11,10 @@ def index():
 
 @app.route('/menu')
 def menu():
-    return render_template("menu.html")
+    cates = dao.load_categories()
+    return render_template("menu.html", cates=cates)
+
+
 
 @app.route('/login')
 def login():

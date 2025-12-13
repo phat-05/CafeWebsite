@@ -37,7 +37,42 @@ h1, h2, h3 {
     cursor: pointer;
 }
 
-/*test*/
 .form-floating > label {
     left: 0.5rem !important;
+}
+
+.about-title {
+    background-image: url("https://res.cloudinary.com/dphz3ewhr/image/upload/v1765521024/about-title-bg_izvj4i.jpg");
+}
+
+#navbar-about {
+    top: 66px;
+    z-index: 999;
+    box-shadow: gray 2px 1px;
+    background-color: #191a1c;
+}
+
+#navbar-about .nav-link.active {
+    background-color: transparent !important;
+    border-radius: 0;
+    height: 100%;
+    text-decoration-line: underline !important;
+}
+
+.scrollspy-example h1 {
+    margin: 2rem;
+    text-shadow: gray 2px 1px;
+}
+
+.scrollspy-example img {
+    height: 20rem;
+    object-fit: cover;
+}
+
+.scrollspy-example .row:nth-of-type(even) img {
+    box-shadow: -10px 5px 15px gray;
+}
+
+.scrollspy-example .row:nth-of-type(odd) img {
+    box-shadow: 10px 5px 15px gray;
 }

@@ -12,28 +12,25 @@
 <div class="bg-body position-absolute vh-100 d-flex align-items-center justify-content-center col-5 p-5 end-0">
     <form class="row g-3">
         <h1 class="col-12 text-center mb-5 fw-bolder fs-1">Trang Đăng Ký</h1>
-        <div class="col-6">
-            <label for="inputLastName" class="form-label">Họ</label>
-            <input id="inputLastName" type="text" class="form-control">
+        <div class="form-floating mb-3 col-12 col-md-6">
+            <input type="text" class="form-control" id="lastName" placeholder="Last Name">
+            <label for="lastName"><i class="bi bi-person"></i> Họ</label>
         </div>
-        <div class="col-6">
-            <label for="inputFirstName" class="form-label">Tên</label>
-            <input id="inputFirstName" type="text" class="form-control">
+        <div class="form-floating mb-3 col-12 col-md-6">
+            <input type="text" class="form-control" id="firstName" placeholder="First Name">
+            <label for="firstName">Tên</label>
         </div>
-        <dv class="col-12">
-            <label for="inputEmail1" class="form-label">Email</label>
-            <input type="email" class="form-control" id="inputEmail1">
-        </dv>
-        <div class="col-12">
-            <label for="inputPassword1" class="form-label">Mật Khẩu</label>
-            <input type="password" class="form-control" id="inputPassword1">
+        <div class="form-floating mb-3">
+            <input type="email" class="form-control" id="email" placeholder="name@example.com">
+            <label for="email"><i class="bi bi-envelope"></i> Email</label>
         </div>
-        <div class="col-12">
-            <label for="inputPassword2" class="form-label">Nhập Lại Mật Khẩu</label>
-            <input type="password" class="form-control" id="inputPassword2">
+        <div class="form-floating mb-3">
+            <input type="password" class="form-control" id="password" placeholder="Password">
+            <label for="password"><i class="bi bi-lock"></i> Mật khẩu</label>
         </div>
-        <div class="col-12 text-center mt-5">
-            <button type="submit" class="btn btn-primary">Đăng Ký</button>
+        <div class="form-floating">
+            <input type="password" class="form-control" id="confirm" placeholder="Password">
+            <label for="confirm"><i class="bi bi-lock"></i> Nhập lại mật khẩu</label>
         </div>
         <div class="col-12 text-center mt-5">
             <p class="text-secondary">Bạn đã có tài khoản? <a href="/login" class="link-secondary">Đăng Nhập</a></p>
