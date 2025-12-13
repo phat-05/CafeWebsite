@@ -13,11 +13,13 @@ class Base(database.Model):
         return self.name
 
 class Category(Base):
+    __tablename__ = 'category'
     description = Column(Text)
     products = relationship("Product", backref="category", lazy=True)
 
 
 class Product(Base):
+    __tablename__ = 'product'
     unit = Column(String(20), nullable=False)
     price = Column(Float, default=0)
     image = Column(String(255), nullable=False)
