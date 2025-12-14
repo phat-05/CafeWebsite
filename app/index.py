@@ -37,4 +37,5 @@ def about():
     return render_template("about-us.html")
 
 if __name__ == '__main__':
+    from app import admin
     app.run(debug=True, port=8080)
