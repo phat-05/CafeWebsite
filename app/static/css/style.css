@@ -46,7 +46,8 @@ h1, h2, h3 {
 }
 
 .filter {
-    top: 200px
+    background-color: rgba(211, 211, 211, 0.25);
+    top: 146px;
 }
 
 #navbar-about, #navbar-menu {
