@@ -1,5 +1,5 @@
 import json
-from flask import render_template
+from flask import render_template, request
 
 from app import app,dao
 
@@ -9,12 +9,16 @@ def index():
         banners = json.load(f)
     return render_template("index.html", banners=banners)
 
-@app.route('/menu')
+#index
+@app.route('/menu', methods=['GET', 'POST'])
 def menu():
     cates = dao.load_categories()
-    return render_template("menu.html", cates=cates)
-
-
+    category_id = request.args.get("category_id")
+    keyword = request.args.get("kw")
+    sort = request.args.get("sort")
+    products = dao.load_products(category_id=category_id, keyword=keyword,sort=sort)
+    return render_template("menu.html", cates=cates, products=products, category_id=category_id
+                           , keyword=keyword, sort=sort)
 
 @app.route('/login')
 def login():
