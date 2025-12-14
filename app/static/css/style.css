@@ -45,7 +45,7 @@ h1, h2, h3 {
     background-image: url("https://res.cloudinary.com/dphz3ewhr/image/upload/v1765521024/about-title-bg_izvj4i.jpg");
 }
 
-.menu-sidebar {
+.filter {
     top: 200px
 }
 
@@ -80,4 +80,18 @@ h1, h2, h3 {
 
 .scrollspy-example .row:nth-of-type(odd) img {
     box-shadow: 2px 5px 5px gray;
+}
+
+.cate-box:hover {
+    border: solid 1px black !important;
+}
+
+.cate-box.active {
+    border: solid 1px black !important;
+    background-color: black !important;
+    color: white !important;
+}
+
+.price {
+    font-family: 'Digital-7', 'Orbitron', sans-serif;
 }

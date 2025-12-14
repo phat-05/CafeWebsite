@@ -15,9 +15,10 @@ def menu():
     cates = dao.load_categories()
     category_id = request.args.get("category_id")
     keyword = request.args.get("kw")
-    products = dao.load_products(category_id=category_id, keyword=keyword)
+    sort = request.args.get("sort")
+    products = dao.load_products(category_id=category_id, keyword=keyword,sort=sort)
     return render_template("menu.html", cates=cates, products=products, category_id=category_id
-                           , keyword=keyword)
+                           , keyword=keyword, sort=sort)
 
 @app.route('/login')
 def login():
