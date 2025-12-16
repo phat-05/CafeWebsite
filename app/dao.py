@@ -1,4 +1,5 @@
 from sqlalchemy import null, desc
+from sqlalchemy.testing.pickleable import User
 
 from app.models import Category, Product
 
@@ -23,3 +24,6 @@ def load_products(category_id=None, keyword=None, sort=None):
         #     query = query.order_by(Product.created_date)
 
     return query.all()
+
+def get_user_by_id(id):
+    return User.query.get(int(id))

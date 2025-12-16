@@ -1,15 +1,18 @@
 import json
 from flask import render_template, request
+from sqlalchemy.testing.pickleable import User
 
-from app import app,dao
+from app import app,dao, login
 
+@login.user_loader
+def load_user(id):
+    return dao.get_user_by_id(id)
 @app.route('/')
 def index():
     with open("./static/data/banner.json") as f:
         banners = json.load(f)
     return render_template("index.html", banners=banners)
 
-#index
 @app.route('/menu', methods=['GET', 'POST'])
 def menu():
     cates = dao.load_categories()
