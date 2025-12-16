@@ -49,7 +49,6 @@ class Customer(Person):
     address = Column(String(255), nullable=False)
 
     account_id = Column(Integer, ForeignKey('accounts.id'), nullable=True)
-    account = relationship("Account", backref="customer", lazy=True, uselist=False)
     orders = relationship("Order", backref="customer", lazy=True)
 
 
@@ -60,7 +59,6 @@ class Staff(Person):
     salary = Column(Float, nullable=False, default=0)
 
     account_id = Column(Integer, ForeignKey('accounts.id'), nullable=False)
-    account = relationship("Account", backref="staff", lazy=True, uselist=False)
     orders = relationship("Order", backref="staff", lazy=True)
 
 
@@ -69,8 +67,12 @@ class Account(Base, UserMixin):
     __tablename__ = 'accounts'
     user_name = Column(String(100), nullable=False, unique=True)
     password = Column(String(100), nullable=False)
+    #avatar = Column(String(255), nullable=False, default='https://static.vecteezy.com/system/resources/previews/046/010/545/non_2x/user-icon-simple-design-free-vector.jpg')
     user_role = Column(Enum(UserRole), nullable=False, default=UserRole.CUSTOMER)
     status = Column(Boolean, nullable=False, default=True)
+
+    customer = relationship("Customer", backref="account", lazy=True, uselist=False)
+    staff = relationship("Staff", backref="account", lazy=True, uselist=False)
 
     def __str__(self):
         return self.user_name

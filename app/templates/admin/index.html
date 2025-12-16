@@ -1,0 +1,10 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+{% if is_admin_user %}
+<h1>Chào mừng đến với trang quản trị</h1>
+<h2>Chào {{ current_user.name }}</h2>
+{% else %}
+
+{% endif %}
+{% endblock %}

@@ -5,89 +5,91 @@
 {% block content %}
 <!-- Carousel Banner -->
 <section class="banner">
-    <div class="carousel slide" data-bs-ride="carousel" id="carouselExampleIndicators">
+    <div id="bannerCarousel" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-indicators">
             {% for b in banners %}
-            <button {% if loop.first %}
-                    aria-current="true"
-                    {% endif %}
-                    {% if loop.first %}
-                    class="active"
-                    {% endif %}
-                    aria-label="Slide {{ loop.index }}"
-                    data-bs-slide-to="{{ loop.index0 }}"
-                    data-bs-target="#carouselExampleIndicators"
-                    type="button">
+            <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="{{ loop.index0 }}"
+                    {% if loop.first %}class="active" aria-current="true"{% endif %}
+                    aria-label="Slide {{ loop.index }}">
             </button>
             {% endfor %}
         </div>
         <div class="carousel-inner">
             {% for b in banners %}
             <div class="carousel-item {% if loop.first %}active{% endif %} ratio ratio-21x9">
-                <img alt="banner" class="d-block object-fit-fill" src="{{ b.image }}">
+                <img src="{{ b.image }}" class="d-block w-100 object-fit-fill" alt="banner">
             </div>
             {% endfor %}
         </div>
-        <button class="carousel-control-prev" data-bs-slide="prev" data-bs-target="#carouselExampleIndicators"
-                type="button">
-            <span aria-hidden="true" class="carousel-control-prev-icon"></span>
+        <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
             <span class="visually-hidden">Previous</span>
         </button>
-        <button class="carousel-control-next" data-bs-slide="next" data-bs-target="#carouselExampleIndicators"
-                type="button">
-            <span aria-hidden="true" class="carousel-control-next-icon"></span>
+        <button class="carousel-control-next" type="button" data-bs-target="#bannerCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
             <span class="visually-hidden">Next</span>
         </button>
     </div>
 </section>
 
-
-<!-- Hiển thị sản phẩm bán chạy -->
 <section class="best-sales">
     <h1 class="text-center mt-5 fw-bolder">
         <i class="bi bi-fire text-danger"></i>
         Sản phẩm bán chạy
         <i class="bi bi-fire text-danger"></i>
     </h1>
-    <div class="text-center">
-        <i class="bi bi-heart"></i> -
-        <i class="bi bi-cup-straw"></i> -
-        <i class="bi bi-heart"></i>
+    <div class="text-center mb-3">
+        <i class="bi bi-heart"></i> - <i class="bi bi-cup-straw"></i> - <i class="bi bi-heart"></i>
     </div>
+
     <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner">
-            {% for start in range(0, 50, 4) %}
+            {% for chunk in popular_products|batch(4, fill_with=None) %}
             <div class="carousel-item {% if loop.first %}active{% endif %} p-4">
                 <div class="row g-3 justify-content-center">
+                    {% for item in chunk %}
+                        {% if item %}
+                            {% set p = item[0] %}
+                            {% set count = item[1] %}
 
-                    {% for i in range(start, start + 4) %}
-                    {% if i < 50 %}
-                    <div class="col-12 col-md-6 col-lg-2 ms-3 me-3">
-                        <div class="card h-100 shadow border-0">
-                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-00cicjGoOhT9L6ZW3kmc0RX5L4P_plVZAA&s"
-                                 class="card-img-top" alt="...">
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="card-title">Iced Caramel Machiato</h5>
-                                <p class="card-text fw-bold text-center">23.000đ</p>
-                                <a href="#" class="btn btn-danger mt-auto w-100 rounded-pill">Mua hàng</a>
+                            <div class="col-12 col-md-6 col-lg-2 ms-3 me-3">
+                                <div class="card h-100 shadow border-0 position-relative">
+
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                        {{ count }} sold
+                                        <span class="visually-hidden">unread messages</span>
+                                    </span>
+
+                                    <img src="{{ p.image }}" class="card-img-top" alt="{{ p.name }}">
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title text-truncate">{{ p.name }}</h5>
+
+                                        <p class="card-text fw-bold text-center text-danger">
+                                            {{ "{:,.0f}".format(p.price) }}đ
+                                        </p>
+
+                                        <a href="/cart/add/{{ p.id }}" class="btn btn-outline-danger mt-auto w-100 rounded-pill">
+                                            <i class="bi bi-cart-plus"></i> Chọn mua
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    {% endif %}
+                        {% endif %}
                     {% endfor %}
-
                 </div>
             </div>
             {% endfor %}
-
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying"
-                data-bs-slide="prev">
-            <i class="bi bi-chevron-left fs-1 text-dark"></i>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+            <span class="p-2 bg-dark rounded-circle opacity-50">
+                 <i class="bi bi-chevron-left fs-4 text-white"></i>
+            </span>
         </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying"
-                data-bs-slide="next">
-            <i class="bi bi-chevron-right fs-1 text-dark"></i>
+        <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+            <span class="p-2 bg-dark rounded-circle opacity-50">
+                <i class="bi bi-chevron-right fs-4 text-white"></i>
+            </span>
         </button>
     </div>
 </section>
@@ -192,7 +194,7 @@
                                         mang lại tinh thần tích cực để bắt đầu ngày mới.
                                     </p>
                                     <a href="https://robanme.com/mieng-ca-la-dau-cau-chuyen/"
-                                       class="btn-sm mt-2 text-secondary ">
+                                       class="btn btn-outline-dark btn-sm mt-2">
                                         Xem thêm →
                                     </a>
 
@@ -219,7 +221,7 @@
                                         nơi lưu giữ kỷ niệm của bạn bè và người thân.
                                     </p>
                                     <a href="https://www.boblacoffee.com/2022/11/tan-man-ben-ly-ca-phe-vi-ki-uc.html"
-                                       class="btn btn-primary btn-sm mt-2">
+                                       class="btn btn-outline-dark btn-sm mt-2">
                                         Xem thêm →
                                     </a>
                                 </div>
@@ -245,7 +247,7 @@
                                         là nguồn cảm hứng cho những ý tưởng mới.
                                     </p>
                                     <a href="https://vintagetastedeli.cafe/quan-cafe-vintage-sang-tao/"
-                                       class="btn btn-primary btn-sm mt-2">
+                                       class="btn btn-outline-dark btn-sm mt-2">
                                         Xem thêm →
                                     </a>
                                 </div>
@@ -271,7 +273,7 @@
                                         tạo nên sự gắn kết bền lâu.
                                     </p>
                                     <a href="https://huyenthoaiviet.vn/cafe-gan-ket-nhung-tam-hon-29d.html?srsltid=AfmBOoo_KsP-q-RQpQSwGXqAGIoIYgj7meK58Y1T-9o9JGld4Giq52wk"
-                                       class="btn btn-primary btn-sm mt-2">
+                                       class="btn btn-outline-dark btn-sm mt-2">
                                         Xem thêm →
                                     </a>
                                 </div>

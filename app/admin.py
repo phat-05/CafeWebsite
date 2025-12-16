@@ -1,4 +1,6 @@
-from flask_admin import Admin
+from flask import abort
+
+from flask_admin import Admin, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
 
 from app import database, app
@@ -13,6 +15,15 @@ class AdminView(ModelView):
     def is_accessible(self):
         return current_user.is_authenticated and current_user.user_role == UserRole.ADMIN
 
+    def inaccessible_callback(self, name, **kwargs):
+        abort(403)
+
+class MyAdminIndexView(AdminIndexView):
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.user_role == UserRole.ADMIN
+
+    def inaccessible_callback(self, name, **kwargs):
+        abort(403)
 
 class ProductView(AdminView):
     column_list = ("id", "name", "category", "unit", "recipes", "price")
@@ -160,7 +171,7 @@ class StaffView(AdminView):
     column_searchable_list = ["name", "phone", "email", "position"]
     form_columns = ["name", "phone", "email", "position", "salary"]
 
-admin = Admin(app=app, name="Trang quản trị - Hailan Cafe")
+admin = Admin(app=app, name="Trang quản trị - Hailan Cafe", index_view=MyAdminIndexView())
 admin.add_view(CategoryView(model=Category, session=database.session, name="Danh mục"))
 admin.add_view(ProductView(model=Product, session=database.session, name="Sản phẩm"))
 admin.add_view(CustomerView(model=Customer, session=database.session, name="Khách hàng"))
