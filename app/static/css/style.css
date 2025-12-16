@@ -47,7 +47,7 @@ h1, h2, h3 {
 
 .filter {
     background-color: rgba(211, 211, 211, 0.25);
-    top: 146px;
+    top: -68px !important;
 }
 
 #navbar-about, #navbar-menu {
@@ -83,6 +83,10 @@ h1, h2, h3 {
     box-shadow: 2px 5px 5px gray;
 }
 
+.cate-box {
+    height: 5rem;
+}
+
 .cate-box:hover {
     border: solid 1px black !important;
 }
@@ -95,4 +99,40 @@ h1, h2, h3 {
 
 .price {
     font-family: 'Digital-7', 'Orbitron', sans-serif;
+}
+
+.product-card {
+    box-shadow: 2px 5px 5px gray;
+}
+
+.card > img{
+    height: 13rem !important;
+}
+
+.add-to-cart {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+    padding: 0 !important;
+}
+
+.card-title {
+    height: 3rem;
+}
+
+.offcanvas {
+    padding-top: 66px;
+}
+
+#btn-back-to-top {
+    position: fixed !important;
+    bottom: 1rem !important;
+    right: 1rem !important;
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+    padding: 0 !important;
+    display: none;
+}
+
+#btn-back-to-top:hover > i{
+    transform: translateY(-1rem);
 }

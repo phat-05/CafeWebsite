@@ -1,4 +1,5 @@
 $(document).ready(function () {
+
     $(".cate-box").click(function (e) {
         e.preventDefault();
         const id = $(this).attr("data-id");
@@ -54,4 +55,15 @@ $(document).ready(function () {
         window.location.href = url.toString();
     })
 
+    $(window).scroll(function () {
+        if ($(window).scrollTop() > 2500) {
+            $("#btn-back-to-top").slideDown();
+        } else {
+            $("#btn-back-to-top").slideUp();
+        }
+    });
+
+    $("#btn-back-to-top").click(function () {
+        $('html, body').animate({scrollTop: 0}, '1');
+    });
 })
