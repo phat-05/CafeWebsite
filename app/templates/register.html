@@ -10,30 +10,49 @@
     </p>
 </div>
 <div class="bg-body position-absolute vh-100 d-flex align-items-center justify-content-center col-12 col-md-5 p-5 end-0">
-    <form class="row g-3">
-        <h1 class="col-12 text-center mb-5 fw-bolder fs-1">Trang Đăng Ký</h1>
-        <div class="form-floating mb-3 col-12 col-md-6">
-            <input type="text" class="form-control" id="lastName" placeholder="Last Name">
-            <label for="lastName"><i class="bi bi-person"></i> Họ</label>
+    <form class="row g-3" method="POST" action="/register" enctype="multipart/form-data">
+        {% if message %}
+        <div class="alert alert-danger d-flex p-2" role="alert">
+            <p class="mb-0 me-auto">{{ message }}</p>
+            <a href="/register">
+                <button type="button" class="btn-close" aria-label="Close"></button>
+            </a>
         </div>
-        <div class="form-floating mb-3 col-12 col-md-6">
-            <input type="text" class="form-control" id="firstName" placeholder="First Name">
-            <label for="firstName">Tên</label>
+        {% endif %}
+        <h1 class="col-12 text-center mb-3 fw-bolder fs-1">Trang Đăng Ký</h1>
+        <div class="form-floating mb-0 col-12 col-md-7">
+            <input type="text" class="form-control" id="name" placeholder="Name" name="name" required>
+            <label for="name"><i class="bi bi-person"></i> Tên</label>
         </div>
-        <div class="form-floating mb-3">
-            <input type="email" class="form-control" id="email" placeholder="name@example.com">
+        <div class="form-floating mb-0 col-12 col-md-5">
+            <input type="text" class="form-control" id="username" placeholder="Phone" name="username" required>
+            <label for="username"><i class="bi bi-at"></i> Tên đăng nhập</label>
+        </div>
+        <div class="form-floating mb-0 col-12 col-md-5">
+            <input type="text" class="form-control" id="phone" placeholder="Phone" name="phone" required>
+            <label for="phone"><i class="bi bi-phone"></i> Số điện thoại</label>
+        </div>
+        <div class="form-floating mb-0 col-md-7">
+            <input type="email" class="form-control" id="email" placeholder="name@example.com" name="email" required>
             <label for="email"><i class="bi bi-envelope"></i> Email</label>
         </div>
-        <div class="form-floating mb-3">
-            <input type="password" class="form-control" id="password" placeholder="Password">
+        <div class="form-floating mb-0 col-12">
+            <input type="text" class="form-control" id="address" placeholder="Phone" name="address" required>
+            <label for="address"><i class="bi bi-phone"></i> Địa chỉ</label>
+        </div>
+        <div class="form-floating mb-0">
+            <input type="password" class="form-control" id="password" placeholder="Password" name="password" required>
             <label for="password"><i class="bi bi-lock"></i> Mật khẩu</label>
         </div>
         <div class="form-floating">
-            <input type="password" class="form-control" id="confirm" placeholder="Password">
+            <input type="password" class="form-control" id="confirm" placeholder="Password" name="confirm" required>
             <label for="confirm"><i class="bi bi-lock"></i> Nhập lại mật khẩu</label>
         </div>
+        <div class="col-12 text-center mt-3">
+            <button type="submit" class="btn btn-dark">Đăng ký</button>
+        </div>
         <div class="col-12 text-center mt-5">
-            <p class="text-secondary">Bạn đã có tài khoản? <a href="/login" class="link-secondary">Đăng Nhập</a></p>
+            <p class="text-secondary">Bạn đã có tài khoản? <a href="/login" class="link-dark">Đăng Nhập</a></p>
         </div>
         <div class="col-12">
             <p class="text-center">

@@ -37,9 +37,9 @@
                     <div class="card mb-3">
                         <div class="card-body">
                             <h6 class="mb-3 card-title">Danh mục</h6>
-                            <div class="row g-2 mb-3">
+                            <div class="row g-2 mb-3 d-flex">
                                 {% for cate in cates %}
-                                <div class="col-6">
+                                <div class="col-6 align-self-center">
                                     <a href="#"
                                        data-id="{{ cate.id }}"
                                        data-current-id="{{ category_id }}"
@@ -105,7 +105,7 @@
                         <a href="#" class="btn btn-outline-danger rounded-circle fs-3 text-center add-to-cart
                         align-self-center "
                            title="Thêm vào giỏ hàng">
-                            +
+                            <bi class="bi bi-cart-plus"></bi>
                         </a>
                     </div>
                 </div>

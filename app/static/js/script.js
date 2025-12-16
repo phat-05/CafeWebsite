@@ -66,4 +66,16 @@ $(document).ready(function () {
     $("#btn-back-to-top").click(function () {
         $('html, body').animate({scrollTop: 0}, '1');
     });
+
+    $("#enable-edit").click(function () {
+        $(this).hide()
+        $("#profileForm input").prop("disabled", false);
+        $("#actionButtons").removeClass("d-none");
+    });
+
+    $("#cancel-edit").click(function () {
+        $("#enable-edit").show()
+        $("#profileForm input").prop("disabled", true);
+        $("#actionButtons").addClass("d-none");
+    })
 })
