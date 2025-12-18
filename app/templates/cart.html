@@ -1,72 +1,144 @@
 {% extends 'layout/base.html' %}
+{% block title %}Giỏ hàng | HaiLan Cafe{% endblock %}
 
-{% block title %}Giỏ hàng{% endblock %}
 {% block content %}
-<div class="container my-4">
-    <div class="row">
-        <!-- Cart items -->
-        <div class="col-md-8">
-            <h3 class="mb-3">Giỏ hàng</h3>
+<div class="container">
+    {% if 'cart' in session and session['cart'] %}
+    <h1 class="fw-bolder p-5 text-center">GIỎ HÀNG</h1>
+    <div class="row mb-5">
+        <div class="col-lg-8 col-12">
+            {% for item in session['cart'].values() %}
+            <div class="card border shadow-sm rounded mb-2" id="prod-{{ item.id }}">
+                <div class="card-body d-flex align-items-center">
+                    <img src="{{ item.image }}"
+                         class="rounded-3 me-4" style="width: 60px; height: 75px; object-fit: cover;">
 
-            <ul class="list-group mb-3">
-                <!-- Item -->
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div class="d-flex">
-                        <img src="https://via.placeholder.com/80" class="rounded me-3" alt="">
-                        <div>
-                            <h6 class="my-0">Cà phê sữa</h6>
-                            <small class="text-muted">Size M</small>
+                    <div class="flex-grow-1">
+                        <h5 class="fw-bold mb-1">{{ item.name }}</h5>
+                        <span class="text-muted">Đơn giá:</span>
+                        <span class="small price fw-light">
+                            <span id="prod-{{ item.id }}-price">
+                                {{ "{:,.0f}".format(item.price|float) }}
+                            </span> VNĐ
+                        </span>
+                    </div>
+                    <span class="text-muted me-2">Số lượng: </span>
+                    <div class="d-flex align-items-center bg-secondary bg-opacity-10">
+                        <button id="reduce-qty-{{ item.id }}"
+                                class="btn btn-sm btn-dark rounded-0 {% if item.quantity <= 1 %}disabled{% endif %}"
+                                onclick="updateCart('{{ item.id }}', -1)">-
+                        </button>
+                        <span class="ps-3 pe-3 fw-bolder" id="qty-{{ item.id }}">{{ item.quantity }}</span>
+                        <button id="increce-qty-{{ item.id }}"
+                                class="btn btn-sm btn-dark rounded-0 inc-item {% if current_quantity >= 10 %}disabled{% endif %}"
+                                onclick="updateCart('{{ item.id }}', 1)">+
+                        </button>
+                    </div>
+                    <div class="ms-4 text-end" style="min-width: 120px;">
+                            <span class="fw-bolder text-danger price" id="price-{{ item.id }}">
+                                {{ "{:,.0f}".format(item.price|float * item.quantity) }} VNĐ
+                            </span>
+                    </div>
+                    <button class="btn btn-outline-primary ms-4 me-2" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseNote{{ item.id }}" aria-expanded="false"
+                            aria-controls="collapseWidthExample" title="Thêm ghi chú">
+                        <i class="bi bi-sticky"></i>
+                    </button>
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal"
+                            data-bs-target="#removeItem-{{ item.id }}">
+                        <i class="bi bi-trash"></i>
+                    </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="removeItem-{{ item.id }}" tabindex="-1"
+                         aria-labelledby="exampleModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5 fw-bolder" id="exampleModalLabel">Bạn có chắc muốn xoá
+                                        sản phẩm
+                                        này không?</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body d-flex align-items-center">
+                                    <img src="{{ item.image }}"
+                                         class="rounded-3 me-4" style="width: 60px; height: 75px; object-fit: cover;">
+
+                                    <div class="flex-grow-1">
+                                        <h5 class="fw-bold mb-1">{{ item.name }}</h5>
+                                        <span class="text-muted">Đơn giá:</span>
+                                        <span class="small price fw-light">{{ "{:,.0f}".format(item.price|float) }} VNĐ</span>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-info" data-bs-dismiss="modal">Không
+                                    </button>
+                                    <button type="button" class="btn btn-danger" onclick="deleteCart('{{ item.id }}')">
+                                        <i class="bi bi-trash"></i>
+                                        Xoá
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="text-end">
-                        <span class="text-muted">28.000đ</span><br>
-                        <input type="number" class="form-control form-control-sm mt-2" style="width: 70px;" value="1">
-                    </div>
-                </li>
-
-                <!-- Item -->
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div class="d-flex">
-                        <img src="https://via.placeholder.com/80" class="rounded me-3" alt="">
-                        <div>
-                            <h6 class="my-0">Trà đào</h6>
-                            <small class="text-muted">Size L</small>
-                        </div>
-                    </div>
-                    <div class="text-end">
-                        <span class="text-muted">32.000đ</span><br>
-                        <input type="number" class="form-control form-control-sm mt-2" style="width: 70px;" value="2">
-                    </div>
-                </li>
-
-            </ul>
+                </div>
+                <div class="collapse collapse-horizontal px-3 py-1" id="collapseNote{{ item.id }}">
+                    <textarea class="w-100 p-2 fw-lighter" id="note-{{ item.id }}" rows="1"
+                              onblur="addNote({{ item.id }}, this)"
+                              placeholder="Thêm ghi chú ...">{{ item.note }}</textarea>
+                </div>
+            </div>
+            {% endfor %}
         </div>
-
-        <!-- Summary -->
-        <div class="col-md-4">
-            <div class="card p-3 sticky-top">
-                <h5 class="mb-3">Tổng tiền</h5>
-
-                <div class="d-flex justify-content-between">
-                    <span>Tạm tính</span>
-                    <strong>92.000đ</strong>
+        <div class="col-lg-4">
+            <div class="card border shadow-sm rounded position-sticky z-5 mb-2" style="top: 100px;">
+                <div class="card-header bg-dark text-white py-3 border-0">
+                    <h5 class="mb-0 fw-bold">TÓM TẮT ĐƠN HÀNG</h5>
                 </div>
-
-                <div class="d-flex justify-content-between">
-                    <span>Phí giao hàng</span>
-                    <strong>10.000đ</strong>
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted">Tổng số món:</span>
+                        <span class="fw-bold cart-counter">{{ stats_cart.total_quantity }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted">Tạm tính:</span>
+                        <span class="fw-bold price text-dark cart-sub">{{ "{:,.0f}".format(stats_cart.subtotal|float) }} VNĐ</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted">Phí phục vụ:</span>
+                        <span class="text-dark fw-bold">{{ stats_cart.service_fee_rate }} %</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted">Tổng phí phục vụ:</span>
+                        <span class="fw-bold price text-info cart-ser-fee">{{ "{:,.0f}".format(stats_cart.service_fee) }} VNĐ</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="fs-5 fw-bold">TỔNG CỘNG:</span>
+                        <span class="fs-4 fw-bold text-danger price cart-total" id="total-amount-summary">
+                            {{ "{:,.0f}".format(stats_cart.total_price) }} VNĐ
+                        </span>
+                    </div>
+                    <button class="btn btn-danger w-100 p-3 rounded fw-bold shadow"
+                            type="button"
+                            onclick="order()">
+                        ĐẶT HÀNG
+                    </button>
                 </div>
-
-                <hr>
-
-                <div class="d-flex justify-content-between">
-                    <span><strong>Tổng cộng</strong></span>
-                    <strong class="text-primary">102.000đ</strong>
-                </div>
-
-                <button class="btn btn-primary w-100 mt-3">Thanh toán</button>
             </div>
         </div>
     </div>
+    {% else %}
+    <div class="text-center w-100 vh-100 d-flex justify-content-center align-items-center">
+        <div>
+            <i class="bi bi-cart-x display-1 text-muted"></i>
+            <p class="mt-3 text-muted">Giỏ hàng của bạn đang trống.</p>
+            <a href="/menu" class="btn btn-dark rounded-pill">Tiếp tục mua sắm</a>
+        </div>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

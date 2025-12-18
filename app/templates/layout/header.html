@@ -20,7 +20,7 @@
                     <a class="nav-link" href="/about-us"><i class="bi bi-people"></i> Về chúng tôi</a>
                 </li>
             </ul>
-            <ul class="navbar-nav">
+            <ul class="navbar-nav z-0">
                 {% if current_user.is_authenticated%}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
@@ -32,7 +32,7 @@
                             {{ current_user.user_name }}
                         </span>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                    <ul class="dropdown-menu dropdown-menu-end shadown dropdown-profile">
                         <li>
                             <a class="dropdown-item" href="/profile">
                                 <i class="bi bi-person me-2"></i> Hồ sơ cá nhân
@@ -45,18 +45,21 @@
                         </li>
                     </ul>
                 </li>
-
+                {% if is_customer %}
+                <li>
+                    <a class="btn text-white position-relative" href="/cart" data-bs-toggle="tooltip" data-bs-placement="left" title="Giỏ hàng">
+                        <i class="bi bi-cart"></i>
+                        <span id="cart-bagde" class="badge bg-danger position-absolute rounded-pill top-0 end-0 cart-counter">
+                            {{ stats_cart.total_quantity or 0}}
+                        </span>
+                    </a>
+                </li>
+                {% endif %}
                 {% else %}
                 <li class="nav-item">
                     <a class="nav-link active" href="/login"><i class="bi bi-box-arrow-in-right"></i> Đăng nhập</a>
                 </li>
                 {% endif %}
-                <li>
-                    <a class="btn text-white position-relative" href="/cart" data-bs-toggle="tooltip" data-bs-placement="left" title="Giỏ hàng">
-                        <i class="bi bi-cart"></i>
-                        <span id="cart-bagde" class="badge bg-danger position-absolute rounded-pill top-0 end-0">0</span>
-                    </a>
-                </li>
             </ul>
         </div>
     </div>

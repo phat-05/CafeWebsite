@@ -2,7 +2,8 @@ from datetime import datetime
 from enum import Enum as MyEnum
 
 from flask_login import UserMixin
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, Text, Enum, Boolean, DateTime
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, Text, Enum, Boolean, DateTime, Null
+from sqlalchemy.ext.orderinglist import count_from_1
 from sqlalchemy.orm import relationship
 
 from app import database, app
@@ -48,7 +49,7 @@ class Customer(Person):
     __tablename__ = 'customers'
     address = Column(String(255), nullable=False)
 
-    account_id = Column(Integer, ForeignKey('accounts.id'), nullable=True)
+    account_id = Column(Integer, ForeignKey('accounts.id'), nullable=False)
     orders = relationship("Order", backref="customer", lazy=True)
 
 
@@ -66,8 +67,8 @@ class Staff(Person):
 class Account(Base, UserMixin):
     __tablename__ = 'accounts'
     user_name = Column(String(100), nullable=False, unique=True)
-    password = Column(String(100), nullable=False)
-    #avatar = Column(String(255), nullable=False, default='https://static.vecteezy.com/system/resources/previews/046/010/545/non_2x/user-icon-simple-design-free-vector.jpg')
+    password = Column(String(255), nullable=False)
+    avatar = Column(String(255), nullable=False, default='https://static.vecteezy.com/system/resources/previews/046/010/545/non_2x/user-icon-simple-design-free-vector.jpg')
     user_role = Column(Enum(UserRole), nullable=False, default=UserRole.CUSTOMER)
     status = Column(Boolean, nullable=False, default=True)
 
@@ -150,6 +151,15 @@ class Product(Base):
 
     def __str__(self):
         return self.name
+
+class Configuration(Base):
+    __tablename__ = 'configuration'
+    key = database.Column(database.String(50), unique=True, nullable=False)
+    value = database.Column(database.String(255), nullable=False)
+    description = database.Column(database.String(255))
+
+    def __str__(self):
+        return self.key + ": " + self.value
 if __name__ == '__main__':
     with app.app_context():
         database.create_all()

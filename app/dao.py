@@ -1,12 +1,11 @@
 import hashlib
-from idlelib.configdialog import changes
+from datetime import datetime
 
 from sqlalchemy import desc, func
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.testing.pickleable import User
 
 from app import database
-from app.models import Category, Product, Account, Customer, UserRole, OrderDetail
+from app.models import Category, Product, Account, Customer, OrderDetail, Configuration, Order, OrderStatus
 
 
 #hàm trả về tất cả danh mục đang lưu trong csdl
@@ -84,3 +83,78 @@ def get_popular_products(number = 8):
         .group_by(Product.id) \
         .order_by(func.sum(OrderDetail.amount).desc()) \
         .limit(number).all()
+
+def get_configs():
+    configs = {}
+    conf = Configuration.query.all()
+    for config in conf:
+        configs[config.key] = {
+            "key": config.key,
+            "value": config.value,
+            "description": config.description,
+        }
+    return configs
+
+def add_order_detail(order_id, product_id, amount, note):
+    try:
+        order_detail = OrderDetail(order_id=order_id, product_id=product_id, amount=amount, note=note)
+        database.session.add(order_detail)
+
+        return {
+            "result": order_detail,
+            "message": f"Thêm thành công: order: {order_id}, product_id: {product_id}, amount: {amount}, note: {note}"
+        }
+    except SQLAlchemyError as ex:
+        database.session.rollback()
+        return {
+            "result": None,
+            "message": f"Thêm chi tiết đơn hàng không thành công!: {ex}"
+        }
+
+
+def add_order(cart, total_price, customer, staff=None):
+    try:
+        customer_id = customer.id
+        created_date = datetime.now()
+        new_order = None
+        if staff:
+            staff_id = staff.id
+            new_order = Order(customer_id=customer_id, staff_id=staff_id , created_date=created_date, total_price=total_price)
+        else:
+            new_order = Order(customer_id=customer_id, created_date=created_date, total_price=total_price)
+
+        database.session.add(new_order)
+        for c in cart.values():
+            new_order_detail = OrderDetail(order=new_order, product_id=c['id'], amount=c['quantity'], note=c['note'] or '')
+            database.session.add(new_order_detail)
+
+        database.session.commit()
+
+        return {
+            "result": new_order,
+            "message": "Đặt hàng thành công!"
+        }
+    except SQLAlchemyError as ex:
+        return {
+            "result": None,
+            "message": "Tạo đơn hàng không thành công!"
+        }
+
+def get_uncompleted_orders(customer_id=None):
+    query = Order.query.filter(Order.status == OrderStatus.IN_PROGRESS)
+    if customer_id:
+        query = query.filter(Order.customer_id == customer_id)
+    return query.order_by(desc(Order.created_date)).all()
+
+
+def confirm_order(order_id):
+    try:
+        order = Order.query.get(order_id)
+        if order:
+            order.status = OrderStatus.COMPLETED
+            database.session.commit()
+            return True
+    except Exception as ex:
+        database.session.rollback()
+        print(ex)
+    return False
