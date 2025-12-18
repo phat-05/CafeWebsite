@@ -1,6 +1,4 @@
 {% extends 'layout/base.html' %}
-
-{% block js %}script{% endblock %}
 {% block title %}Thực đơn | HaiLan Cafe{% endblock %}
 
 {% block content %}
@@ -90,21 +88,21 @@
     {% endif %}
         <!--sản phẩm-->
     {% if products %}
-    <div class="row row-cols-2 row-cols-md-5 g-4 p-3 pt-5">
-        {% for prod in products %}
+    <div class="row row-cols-2 row-cols-md-5 g-4 p-3 pt-5 mb-3">
+        {% for p in products %}
         <div class="col">
             <div class="card product-card">
-                <img src="{{ prod.image }}"
+                <img src="{{ p.image }}"
                      class="card-img-top">
                 <div class="card-body">
-                    <h5 class="card-title fw-light">{{ prod.name }}</h5>
+                    <h5 class="card-title fw-light">{{ p.name }}</h5>
                     <div class="justify-content-between d-flex align-items-center pt-1 pb-1">
                         <h6 class="price fw-bolder p-0 align-self-center">
-                            {{"{:,.0f}".format(prod.price)}} VNĐ
+                            {{"{:,.0f}".format(p.price)}} VNĐ
                         </h6>
-                        <a href="#" class="btn btn-outline-danger rounded-circle fs-3 text-center add-to-cart
-                        align-self-center "
-                           title="Thêm vào giỏ hàng">
+                        <a href="javascript:;" class="btn btn-outline-danger rounded-circle fs-6 text-center add-to-cart align-self-center"
+                           title="Thêm vào giỏ hàng"
+                           onclick="addToCart({{ p.id }}, '{{ p.name }}', '{{ p.image }}', {{ p.price }})">
                             <bi class="bi bi-cart-plus"></bi>
                         </a>
                     </div>
@@ -112,23 +110,6 @@
             </div>
         </div>
         {% endfor %}
-    </div>
-    <div>
-        <ul class="pagination justify-content-center mt-5 mb-5">
-            <li class="page-item disabled">
-                <a class="page-link" href="#">
-                    <i class="bi bi-arrow-left"></i>
-                </a>
-            </li>
-            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item">
-                <a class="page-link" href="#">
-                    <i class="bi bi-arrow-right"></i>
-                </a>
-            </li>
-        </ul>
     </div>
 
     {% else %}

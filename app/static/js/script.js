@@ -78,4 +78,8 @@ $(document).ready(function () {
         $("#profileForm input").prop("disabled", true);
         $("#actionButtons").addClass("d-none");
     })
+
+    $(".close-alert").click(function () {
+        $(this).parent().addClass("d-none");
+    })
 })

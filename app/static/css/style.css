@@ -99,6 +99,7 @@ h1, h2, h3 {
 
 .price {
     font-family: 'Digital-7', 'Orbitron', sans-serif;
+    color: red !important;
 }
 
 .product-card {
@@ -109,11 +110,11 @@ h1, h2, h3 {
     height: 13rem !important;
 }
 
-.add-to-cart {
-    width: 2.5rem !important;
-    height: 2.5rem !important;
-    padding: 0 !important;
-}
+/*.add-to-cart {*/
+/*    width: 2.5rem !important;*/
+/*    height: 2.5rem !important;*/
+/*    padding: 0 !important;*/
+/*}*/
 
 .card-title {
     height: 3rem;
@@ -135,4 +136,8 @@ h1, h2, h3 {
 
 #btn-back-to-top:hover > i{
     transform: translateY(-1rem);
+}
+
+.dropdown-profile {
+    z-index: 999;
 }

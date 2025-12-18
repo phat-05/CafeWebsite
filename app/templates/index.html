@@ -56,7 +56,7 @@
                                 <div class="card h-100 shadow border-0 position-relative">
 
                                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                        {{ count }} sold
+                                        {{ count }} đã bán
                                         <span class="visually-hidden">unread messages</span>
                                     </span>
 
@@ -64,11 +64,12 @@
                                     <div class="card-body d-flex flex-column">
                                         <h5 class="card-title text-truncate">{{ p.name }}</h5>
 
-                                        <p class="card-text fw-bold text-center text-danger">
+                                        <p class="card-text fw-bolder text-center price">
                                             {{ "{:,.0f}".format(p.price) }}đ
                                         </p>
 
-                                        <a href="/cart/add/{{ p.id }}" class="btn btn-outline-danger mt-auto w-100 rounded-pill">
+                                        <a href="javascipt:;" class="btn btn-outline-danger mt-auto w-100 rounded-pill"
+                                            onclick="addToCart({{ p.id }}, '{{ p.name }}', '{{ p.image }}', {{ p.price }})">
                                             <i class="bi bi-cart-plus"></i> Chọn mua
                                         </a>
                                     </div>
@@ -177,7 +178,7 @@
 
                 <!-- Câu chuyện 1 -->
                 <div class="col-lg-6">
-                    <div class="card h-100 border-0 shadow-sm">
+                    <div class="card h-100 border-0 shadow-sm ps-3">
                         <div class="row g-0 align-items-center">
                             <!-- Ảnh -->
                             <div class="col-md-5">
@@ -206,7 +207,7 @@
 
                 <!-- Câu chuyện 2 -->
                 <div class="col-lg-6">
-                    <div class="card h-100 border-0 shadow-sm">
+                    <div class="card h-100 border-0 shadow-sm ps-3">
                         <div class="row g-0 align-items-center">
                             <div class="col-md-5">
                                 <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjd299GcWgvFTSZJ3mXFD8AUWQw6vrHubviboWmh7CpC1PxFgNNeucLQ8Z0hIzRLSW7Lc0-1J3c-IuAp5iCnKNYnieYhdCrMqwxWF3J2lPZbZSg3IFKWu0uJ2uV80RDXYzWGS3346Jofq1A9uVUCzRYgiKuAQuH-_O758VrOqXupmknx61U4l6NP0fL1A/w640-h429/Ca-phe-le-duong.jpg"
@@ -232,7 +233,7 @@
 
                 <!-- Câu chuyện 3 -->
                 <div class="col-lg-6">
-                    <div class="card h-100 border-0 shadow-sm">
+                    <div class="card h-100 border-0 shadow-sm ps-3">
                         <div class="row g-0 align-items-center">
                             <div class="col-md-5">
                                 <img src="https://hocthietkenoithat.edu.vn/wp-content/uploads/2021/04/y-tuong-sang-tao-trong-thiet-ke.jpeg"
@@ -258,7 +259,7 @@
 
                 <!-- Câu chuyện 4 -->
                 <div class="col-lg-6">
-                    <div class="card h-100 border-0 shadow-sm">
+                    <div class="card h-100 border-0 shadow-sm ps-3">
                         <div class="row g-0 align-items-center">
                             <div class="col-md-5">
                                 <img src="https://huyenthoaiviet.vn/file/ca-phe-vui-ve-528f.jpg"
