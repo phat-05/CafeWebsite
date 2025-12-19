@@ -1,10 +1,5 @@
-* {
-    font-family: Roboto, serif;
-    font-weight: 1000;
-}
-
-#cart-bagde {
-    font-size: 0.6rem;
+.navbar {
+    z-index: 999 !important;
 }
 
 body.login {
@@ -12,10 +7,6 @@ body.login {
     background-size: cover;
     background-repeat: no-repeat;
     min-height: 100vh;
-}
-
-h1, h2, h3 {
-    font-family: "Playfair Display", serif;
 }
 
 .menu-decor {
@@ -29,31 +20,18 @@ h1, h2, h3 {
     border: #212529 !important;
 }
 
-.list-group-item {
-    height: 3rem;
-}
-
-.password-toggle {
-    cursor: pointer;
-}
-
-.form-floating > label {
-    left: 0.5rem !important;
-}
+/*.form-floating > label {*/
+/*    left: 0.5rem !important;*/
+/*}*/
 
 .about-title {
     background-image: url("https://res.cloudinary.com/dphz3ewhr/image/upload/v1765521024/about-title-bg_izvj4i.jpg");
 }
 
-.filter {
-    background-color: rgba(211, 211, 211, 0.25);
-    top: -68px !important;
-}
-
 #navbar-about, #navbar-menu {
-    top: 66px;
-    z-index: 999;
-    border-bottom: solid 2px black;
+    top: 98px;
+    z-index: 100;
+    border-bottom: solid 1px black;
     background-color: white;
 }
 
@@ -75,17 +53,13 @@ h1, h2, h3 {
     object-fit: cover;
 }
 
-.scrollspy-example .row:nth-of-type(even) img {
-    box-shadow: -2px 5px 5px gray;
-}
+/*.scrollspy-example .row:nth-of-type(even) img {*/
+/*    box-shadow: -2px 5px 5px gray;*/
+/*}*/
 
-.scrollspy-example .row:nth-of-type(odd) img {
-    box-shadow: 2px 5px 5px gray;
-}
-
-.cate-box {
-    height: 5rem;
-}
+/*.scrollspy-example .row:nth-of-type(odd) img {*/
+/*    box-shadow: 2px 5px 5px gray;*/
+/*}*/
 
 .cate-box:hover {
     border: solid 1px black !important;
@@ -98,39 +72,22 @@ h1, h2, h3 {
 }
 
 .price {
-    font-family: 'Digital-7', 'Orbitron', sans-serif;
     color: red !important;
+    font-weight: bolder !important;
 }
-
-.product-card {
-    box-shadow: 2px 5px 5px gray;
-}
-
-.card > img{
-    height: 13rem !important;
-}
-
-/*.add-to-cart {*/
-/*    width: 2.5rem !important;*/
-/*    height: 2.5rem !important;*/
-/*    padding: 0 !important;*/
-/*}*/
 
 .card-title {
-    height: 3rem;
+    min-height: 2.5rem;
 }
 
-.offcanvas {
-    padding-top: 66px;
+.card img {
+    max-height: 15rem !important;
 }
 
 #btn-back-to-top {
     position: fixed !important;
     bottom: 1rem !important;
     right: 1rem !important;
-    width: 2.5rem !important;
-    height: 2.5rem !important;
-    padding: 0 !important;
     display: none;
 }
 
@@ -140,4 +97,11 @@ h1, h2, h3 {
 
 .dropdown-profile {
     z-index: 999;
+}
+
+.offcanvas {
+    z-index: 2000 !important;
+}
+.offcanvas-backdrop {
+    z-index: 1999 !important;
 }

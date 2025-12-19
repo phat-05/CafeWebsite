@@ -1,4 +1,4 @@
-<nav class="navbar sticky-top navbar-expand-sm navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top" data-bs-theme="dark">
     <div class="container">
         <a class="navbar-brand" href="/">
             <img alt="logo" class="rounded-pill"
@@ -11,7 +11,7 @@
         <div class="collapse navbar-collapse" id="mynavbar">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="/"><i class="bi bi-house"></i> Trang chủ</a>
+                    <a class="nav-link active" href="/"><i class="bi bi-house"></i> Trang chủ</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/menu"><i class="bi bi-list"></i> Thực đơn</a>
@@ -20,41 +20,63 @@
                     <a class="nav-link" href="/about-us"><i class="bi bi-people"></i> Về chúng tôi</a>
                 </li>
             </ul>
-            <ul class="navbar-nav z-0">
-                {% if current_user.is_authenticated%}
+
+            <ul class="navbar-nav ms-auto align-items-center">
+                {% if current_user.is_authenticated %}
+
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
-                       data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="https://static.vecteezy.com/system/resources/previews/046/010/545/non_2x/user-icon-simple-design-free-vector.jpg"
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#"
+                       role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="{{ current_user.avatar }}"
                              width="28" height="28"
-                             class="rounded-circle me-2">
+                             class="rounded-circle me-2"
+                             style="object-fit: cover;">
                         <span class="text-white">
-                            {{ current_user.user_name }}
+                             {{ current_user.user_name }}
                         </span>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end shadown dropdown-profile">
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-profile py-0 shadow">
                         <li>
-                            <a class="dropdown-item" href="/profile">
+                            <a class="dropdown-item p-3" href="/profile">
                                 <i class="bi bi-person me-2"></i> Hồ sơ cá nhân
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item text-danger" href="/logout">
+                            <a class="dropdown-item text-danger p-3" href="/logout">
                                 <i class="bi bi-box-arrow-right me-2"></i> Đăng xuất
                             </a>
                         </li>
                     </ul>
                 </li>
-                {% if is_customer %}
-                <li>
-                    <a class="btn text-white position-relative" href="/cart" data-bs-toggle="tooltip" data-bs-placement="left" title="Giỏ hàng">
-                        <i class="bi bi-cart"></i>
-                        <span id="cart-bagde" class="badge bg-danger position-absolute rounded-pill top-0 end-0 cart-counter">
+
+                {% if current_user.is_customer() %}
+                <li class="nav-item">
+                    <a class="nav-link position-relative mx-2 active" href="/cart" title="Giỏ hàng">
+                        <i class="bi bi-cart fs-5"></i> <span id="cart-bagde" class="badge bg-danger position-absolute rounded-pill top-0 start-100 translate-middle cart-counter" style="font-size: 0.6rem;">
                             {{ stats_cart.total_quantity or 0}}
                         </span>
                     </a>
                 </li>
                 {% endif %}
+
+                {% if current_user.is_admin() %}
+                <li class="nav-item">
+                    <a class="nav-link text-success" href="/admin"><i class="bi bi-speedometer2"></i> Quản trị</a>
+                </li>
+                {% endif %}
+
+                {% if current_user.is_cashier() %}
+                <li class="nav-item">
+                    <a class="nav-link text-success" href="/staff/pay-confirm"><i class="bi bi-check2-circle"></i> Thu ngân</a>
+                </li>
+                {% endif %}
+
+                {% if current_user.is_staff() %}
+                <li class="nav-item">
+                    <a class="nav-link text-success" href="/staff/create-order"><i class="bi bi-receipt"></i> Tạo đơn</a>
+                </li>
+                {% endif %}
+
                 {% else %}
                 <li class="nav-item">
                     <a class="nav-link active" href="/login"><i class="bi bi-box-arrow-in-right"></i> Đăng nhập</a>

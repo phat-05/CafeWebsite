@@ -5,7 +5,7 @@
 <section id="navbar-menu" class="menu-header container p-3 position-sticky" style="scroll-margin-top: 66px;">
     <div class="row align-items-center">
         <div class="col-md-6 col-12 mb-sm-2">
-            <a href="/menu" class="fw-bold text-decoration-none text-dark display-6">THỰC ĐƠN</a>
+            <a href="/menu" class="fw-bolder text-decoration-none text-dark display-6">THỰC ĐƠN</a>
         </div>
         <div class="col-md-6 d-flex justify-content-end">
             <form id="search-form" class="d-flex w-100" method="GET">
@@ -16,63 +16,17 @@
                     <i class="bi bi-x"></i>
                 </a>
                 {% endif %}
-                <button class="btn btn-dark" type="submit">
+                <button class="btn btn-outline-primary" type="submit">
                     <i class="bi bi-search"></i>
                 </button>
             </form>
-            <button class="btn btn-outline-dark ms-2" type="button" data-bs-toggle="offcanvas"
+            <button class="btn btn-outline-primary ms-2" type="button" data-bs-toggle="offcanvas"
                     data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
                 <i class="bi bi-funnel"></i>
             </button>
-            <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions"
-                 aria-labelledby="offcanvasWithBothOptionsLabel">
-                <div class="offcanvas-header">
-                    <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel"><i class="bi bi-funnel"></i> Bộ lọc
-                        tìm kiếm</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                </div>
-                <div class="offcanvas-body">
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h6 class="mb-3 card-title">Danh mục</h6>
-                            <div class="row g-2 mb-3 d-flex">
-                                {% for cate in cates %}
-                                <div class="col-6 align-self-center">
-                                    <a href="#"
-                                       data-id="{{ cate.id }}"
-                                       data-current-id="{{ category_id }}"
-                                       class="cate-box border d-block p-2 rounded text-center text-decoration-none text-dark
-                           {% if category_id|int == cate.id %}active{% endif %}">
-                                        <!--<img src="{{ cate.iamge }}" alt="{{ cate.name }}">-->
-                                        {{ cate.name }}
-                                    </a>
-                                </div>
-                                {% endfor %}
-                            </div>
-                            <h6 class="mb-3 card-title">Lọc</h6>
-                            <div class="g-2">
-                                <select class="form-select" id="sort-select">
-                                    <option value="">Sắp xếp</option>
-                                    <option {% if sort=="giá cao trước
-                                    " %}selected{% endif %} value="giá cao trước">Giá cao trước</option>
-                                    <option {% if sort=="giá thấp trước
-                                    " %}selected{% endif %} value="giá thấp trước">Giá thấp trước</option>
-                                    <option {% if sort=="mới nhất trước
-                                    " %}selected{% endif %} value="mới nhất trước">Món mới</option>
-                                </select>
-                            </div>
-                            <a href="/menu" type="button"
-                               class="btn btn-outline-dark p-2 text-center w-100 border mt-5 fw-bolder">
-                                Xoá tất cả bộ lọc
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </section>
-
 <section class="container menu-container">
     {% if keyword %}
     <div class="btn-group small mt-3">
@@ -86,21 +40,22 @@
         <a href="" type="button" class="btn p-0 sort-rm"><i class="bi bi-x"></i></a>
     </div>
     {% endif %}
-        <!--sản phẩm-->
+    <!--sản phẩm-->
     {% if products %}
-    <div class="row row-cols-2 row-cols-md-5 g-4 p-3 pt-5 mb-3">
+    <div class="row row-cols-2 row-cols-md-4 g-5 py-5">
         {% for p in products %}
         <div class="col">
-            <div class="card product-card">
+            <div class="card">
                 <img src="{{ p.image }}"
-                     class="card-img-top">
+                     class="card-img-top img-fluid object-fit-cover">
                 <div class="card-body">
-                    <h5 class="card-title fw-light">{{ p.name }}</h5>
+                    <h5 class="card-title fw-bolder d-block text-primary">{{ p.name }}</h5>
                     <div class="justify-content-between d-flex align-items-center pt-1 pb-1">
-                        <h6 class="price fw-bolder p-0 align-self-center">
+                        <h6 class="price fw-bolder p-0 align-self-center fs-5">
                             {{"{:,.0f}".format(p.price)}} VNĐ
                         </h6>
-                        <a href="javascript:;" class="btn btn-outline-danger rounded-circle fs-6 text-center add-to-cart align-self-center"
+                        <a href="javascript:;"
+                           class="btn btn-outline-danger fs-6 text-center add-to-cart align-self-center"
                            title="Thêm vào giỏ hàng"
                            onclick="addToCart({{ p.id }}, '{{ p.name }}', '{{ p.image }}', {{ p.price }})">
                             <bi class="bi bi-cart-plus"></bi>
@@ -120,4 +75,49 @@
     </div>
     {% endif %}
 </section>
+<div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions"
+     aria-labelledby="offcanvasWithBothOptionsLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel"><i class="bi bi-funnel"></i> Bộ lọc
+            tìm kiếm</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h6 class="mb-3 card-title">Danh mục</h6>
+                <div class="row g-2 mb-3 d-flex">
+                    {% for cate in cates %}
+                    <div class="col-6 align-self-center">
+                        <a href="#"
+                           data-id="{{ cate.id }}"
+                           data-current-id="{{ category_id }}"
+                           class="cate-box border d-block p-3 text-center text-decoration-none text-dark
+                           {% if category_id|int == cate.id %}active{% endif %}" style="height: 5rem;">
+                            <!--<img src="{{ cate.iamge }}" alt="{{ cate.name }}">-->
+                            {{ cate.name }}
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+                <h6 class="mb-3 card-title">Lọc</h6>
+                <div class="g-2">
+                    <select class="form-select" id="sort-select">
+                        <option value="">Sắp xếp</option>
+                        <option {% if sort=="giá cao trước
+                        " %}selected{% endif %} value="giá cao trước">Giá cao trước</option>
+                        <option {% if sort=="giá thấp trước
+                        " %}selected{% endif %} value="giá thấp trước">Giá thấp trước</option>
+                        <option {% if sort=="mới nhất trước
+                        " %}selected{% endif %} value="mới nhất trước">Món mới</option>
+                    </select>
+                </div>
+                <a href="/menu" type="button"
+                   class="btn btn-outline-primary p-2 text-center w-100 border mt-5 fw-bolder">
+                    Xoá tất cả bộ lọc
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

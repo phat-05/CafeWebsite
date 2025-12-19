@@ -61,14 +61,14 @@ class ProductView(AdminView):
     can_export = True
     form_columns = ["name", "category", "unit", "price", "image"]
 
-    def _format_image(view, context, model, name):
+    def format_image(view, context, model, name):
         if not model.image:
             return ""
         return Markup(f'<img src="{model.image}" width="25" height="25" style=" object-fit:cover;">')
 
     column_formatters = {
         'price': lambda v, c, m, n: "{:,.0f} VNĐ".format(m.price),
-        'image': _format_image
+        'image': format_image
     }
 
 class CategoryView(AdminView):
@@ -130,14 +130,14 @@ class OrderView(AdminView):
     column_filters = ["customer.name", "staff.name", "created_date", "total_price", "status"]
     column_searchable_list = ["customer.name", "staff.name"]
 
-    def _format_status(view, context, model, name):
+    def format_status(view, context, model, name):
         return {
             OrderStatus.IN_PROGRESS: "Đang Xử lý",
             OrderStatus.COMPLETED: "Hoàn thành",
         }.get(model.status, str(model.status))
 
     column_formatters = {
-        'status': _format_status,
+        'status': format_status,
         'total_price': lambda v, c, m, n: "{:,.0f} VNĐ".format(m.total_price)
     }
 
@@ -175,7 +175,7 @@ class StaffView(AdminView):
         ]
     }
 
-    def _format_position(view, context, model, name):
+    def format_position(view, context, model, name):
         return {
             Position.MANAGER: "Quản lý",
             Position.STAFF: "Nhân viên",
@@ -183,7 +183,7 @@ class StaffView(AdminView):
         }.get(model.position, str(model.position))
 
     column_formatters = {
-        'position': _format_position,
+        'position': format_position,
         'salary': lambda v, c, m, n: "{:,.0f} VNĐ".format(m.salary)
     }
 
@@ -206,8 +206,8 @@ admin.add_view(CategoryView(
     name="Danh mục",
     category="Quản lý",
     menu_icon_type='fa',
-    menu_icon_value='fa-tags')
-)
+    menu_icon_value='fa-tags'
+))
 
 admin.add_view(ProductView(
     model=Product,
@@ -215,8 +215,8 @@ admin.add_view(ProductView(
     name="Sản phẩm",
     category="Quản lý",
     menu_icon_type='fa',
-    menu_icon_value='fa-coffee')
-)
+    menu_icon_value='fa-coffee'
+))
 
 admin.add_view(CustomerView(
     model=Customer,
@@ -224,8 +224,8 @@ admin.add_view(CustomerView(
     name="Khách hàng",
     category="Quản lý",
     menu_icon_type='fa',
-    menu_icon_value='fa-user')
-)
+    menu_icon_value='fa-user'
+))
 
 admin.add_view(StaffView(
     model=Staff,
@@ -233,8 +233,8 @@ admin.add_view(StaffView(
     name="Nhân viên",
     category="Quản lý",
     menu_icon_type='fa',
-    menu_icon_value='fa-users')
-)
+    menu_icon_value='fa-users'
+))
 
 admin.add_view(IngredientView(
     model=Ingredient,
@@ -242,8 +242,8 @@ admin.add_view(IngredientView(
     name="Nguyên liệu",
     category="Quản lý",
     menu_icon_type='fa',
-    menu_icon_value='fa-boxes-stacked')
-)
+    menu_icon_value='fa-boxes-stacked'
+))
 
 admin.add_view(RecipeView(
     model=Recipe,
@@ -251,8 +251,8 @@ admin.add_view(RecipeView(
     name="Công thức",
     category="Quản lý",
     menu_icon_type='fa',
-    menu_icon_value='fa-ruler')
-)
+    menu_icon_value='fa-ruler'
+))
 
 admin.add_view(OrderView(
     model=Order,
@@ -260,8 +260,12 @@ admin.add_view(OrderView(
     name="Đơn hàng",
     category="Quản lý",
     menu_icon_type='fa',
-    menu_icon_value='fa-file-invoice-dollar')
-)
+    menu_icon_value='fa-file-invoice-dollar'
+))
 
-admin.add_view(StatisticalView(name="Thống kê", endpoint=''))
+admin.add_view(StatisticalView(
+    name="Thống kê",
+    menu_icon_type='fa-solid',
+    menu_icon_value='fa-chart-pie'
+))
 admin.add_view(MyLogOutView(name="Đăng xuất"))

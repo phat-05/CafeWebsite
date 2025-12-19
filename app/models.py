@@ -78,6 +78,18 @@ class Account(Base, UserMixin):
     def __str__(self):
         return self.user_name
 
+    def is_customer(self):
+        return self.user_role == UserRole.CUSTOMER
+
+    def is_staff(self):
+        return self.user_role == UserRole.STAFF and self.staff.position == Position.STAFF
+
+    def is_admin(self):
+        return self.user_role == UserRole.ADMIN
+
+    def is_cashier(self):
+        return self.user_role == UserRole.STAFF and self.staff.position == Position.CASHIER
+
 
 # class Nguyên liệu(id, tên, đơn vị, số lượng hiện tại, ngày nhập)
 class Ingredient(Base):
@@ -110,7 +122,7 @@ class Order(Base):
     total_price = Column(Float, nullable=False, default=0)
     status = Column(Enum(OrderStatus), nullable=False, default=OrderStatus.IN_PROGRESS)
 
-    customer_id = Column(Integer, ForeignKey('customers.id'), nullable=False)
+    customer_id = Column(Integer, ForeignKey('customers.id'), nullable=True)
     staff_id = Column(Integer, ForeignKey('staffs.id'), nullable=True)
     order_details = relationship("OrderDetail", backref="order", lazy=True)
 
