@@ -6,7 +6,7 @@ from sqlalchemy.util import ordered_column_set
 
 from app import app, dao, login, database, utils
 from app.decorator import anonymous_required, login_required, customer_required, customer_or_serving_staff_required, \
-    cashier_required
+    cashier_required, serving_staff_required
 from app.models import UserRole, Position
 
 
@@ -42,10 +42,12 @@ def login_my_user():
 
         if user:
             login_user(user)
-            if (current_user.user_role == UserRole.ADMIN):
+            if (current_user.is_admin()):
                 return redirect("/admin")
-            if (current_user.user_role == UserRole.STAFF and current_user.staff.position == Position.CASHIER):
+            if (current_user.is_cashier()):
                 return redirect("/staff/pay-confirm")
+            if (current_user.is_staff()):
+                return redirect("/staff/create-order")
             return redirect("/")
         else:
             message = "Tài khoản hoặc mật khẩu không đúng!"
@@ -54,8 +56,11 @@ def login_my_user():
     return render_template("login.html", message=message)
 
 @app.route('/logout')
+@login_required
 def logout():
+    print(session)
     logout_user()
+    session.clear()
     return redirect("/")
 
 @app.route('/profile', methods=['GET', 'POST'])
@@ -128,7 +133,7 @@ def forbidden(e):
 
 
 @app.route("/api/carts", methods=["POST"])
-@customer_or_serving_staff_required
+@customer_required
 def add_to_cart():
     cart = session.get('cart')
     if not cart:
@@ -164,7 +169,7 @@ def add_to_cart():
 
 
 @app.route("/api/carts/<id>", methods=["PUT"])
-@customer_or_serving_staff_required
+@customer_required
 def update_cart(id):
     cart = session.get('cart')
 
@@ -183,7 +188,7 @@ def update_cart(id):
 
 
 @app.route("/api/carts/<id>", methods=["DELETE"])
-@customer_or_serving_staff_required
+@customer_required
 def delete_cart(id):
     cart = session.get('cart')
     if cart and id in cart:
@@ -222,11 +227,22 @@ def order():
 def cart():
     return render_template("cart.html")
 
+@app.route('/api/configs')
+def configs():
+    return jsonify(dao.get_configs())
+
 @app.route('/staff/pay-confirm')
 @cashier_required
 def pay_confirm():
     orders = dao.get_uncompleted_orders()
     return render_template("staff/pay-confirm.html", orders=orders)
+
+@app.route('/staff/create-order')
+@serving_staff_required
+def create_order():
+    cates = dao.load_categories()
+    products = dao.load_products()
+    return render_template("staff/order.html", cates=cates, products=products)
 
 @app.route('/about-us')
 def about():
@@ -239,9 +255,6 @@ def common_attributes():
 
     atributes['configs'] = dao.get_configs()
     atributes['stats_cart'] = utils.stats_cart(session.get('cart'), configs=dao.get_configs())
-
-    if current_user.is_authenticated:
-        atributes['is_customer'] = current_user.customer
 
     if 'cart' in session:
         current_quantity = 0
