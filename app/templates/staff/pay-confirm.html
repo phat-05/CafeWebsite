@@ -1,3 +1,72 @@
 {% extends 'layout/base.html' %}
 
-{% block title %}Thu ngân - Xác nhận & In Hóa đơn{% endblock %}
+{% block header %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block script %}
+<script src="{{ url_for('static', filename = 'js/staff.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <a href="/" class="link-primary"><i class="bi bi-house"></i>  Trang chủ</a>
+    <h2 class="text-center mb-4">Xác nhận thanh toán</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Danh sách đơn chờ thanh toán</h5>
+        </div>
+        <div class="card-body">
+            <input class="form-control border border-primary mb-3" type="search" placeholder="Mã đơn hàng"
+                   onchange="getUncompOrderById(this)" autocomplete="off">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                <tr>
+                    <th>Mã Đơn</th>
+                    <th>Thời gian tạo</th>
+                    <th>Tổng tiền</th>
+                    <th>Chi tiết món</th>
+                    <th class="text-end">Hành động</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for order in orders %}
+                <tr class="uncomp-order" id="uncomp-{{ order.id }}">
+                    <td>#{{ order.id }}</td>
+                    <td>{{ order.created_date.strftime('%d/%m/%y %H:%M:%S') }}</td>
+                    <td class="fw-bold text-danger">
+                        {{ "{:,.0f}".format(order.total_price) }} VNĐ
+                    </td>
+                    <td>
+                        <ol class="">
+                            {% for detail in order.order_details %}
+                            <li>{{ detail.product.name }} (x{{ detail.amount }})</li>
+                            {% endfor %}
+                        </ol>
+                    </td>
+                    <td class="text-end">
+                        <a href="javascript:;"
+                           class="btn btn-success"
+                           onclick="payConfirm({{ order.id }})">
+                            <i class="bi bi-cash"></i> Thu tiền
+                        </a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-center">Hiện không có đơn nào cần thanh toán.</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

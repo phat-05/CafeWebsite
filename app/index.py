@@ -2,12 +2,11 @@ import json
 
 from flask import render_template, request, redirect, jsonify, session
 from flask_login import login_user, logout_user, current_user
-from sqlalchemy.util import ordered_column_set
 
 from app import app, dao, login, database, utils
-from app.decorator import anonymous_required, login_required, customer_required, customer_or_serving_staff_required, \
-    cashier_required, serving_staff_required
-from app.models import UserRole, Position
+from app.decorator import anonymous_required, login_required, customer_required, cashier_required, \
+    serving_staff_required
+from app.models import UserRole
 
 
 @login.user_loader
@@ -58,7 +57,6 @@ def login_my_user():
 @app.route('/logout')
 @login_required
 def logout():
-    print(session)
     logout_user()
     session.clear()
     return redirect("/")
@@ -183,7 +181,6 @@ def update_cart(id):
             cart[id]["note"] = note.strip()
 
     session['cart'] = cart
-    print(cart)
     return jsonify(utils.stats_cart(cart=cart, configs=dao.get_configs()))
 
 
@@ -195,32 +192,53 @@ def delete_cart(id):
         del cart[id]
 
     session['cart'] = cart
-    if cart:
-        return jsonify(utils.stats_cart(cart=cart, configs=dao.get_configs()))
-    else:
-        return jsonify({'flag': True})
+
+    return jsonify(utils.stats_cart(cart=cart, configs=dao.get_configs()))
 
 @app.route('/api/order', methods=['POST'])
-@customer_or_serving_staff_required
-def order():
-    cart = session.get('cart')
-
-    if not cart:
-        return jsonify({'message': 'Giỏ hàng trống!'})
-
+@customer_required
+def customer_order():
     customer = None
-    stats_cart = utils.stats_cart(cart=cart, configs=dao.get_configs())
+    staff = None
+    if 'cart' in session:
+        if not session['cart']:
+            return jsonify({'message': 'Giỏ hàng trống!'})
+        order = session.get('cart')
+        if current_user.customer:
+            customer = current_user.customer
 
-    if current_user.customer:
-        customer = current_user.customer
-
-    result = dao.add_order(cart=cart, customer=customer, total_price=stats_cart['total_price'])
+    order_stats = utils.stats_cart(cart=order, configs=dao.get_configs())
+    result = dao.add_order(cart=order, customer=customer, staff=staff, total_price=order_stats['total_price'])
 
     if result['result']:
-        del session['cart']
+        if 'cart' in session:
+            del session['cart']
         return jsonify({'message': result['message']})
 
-    return jsonify({'message': "Đặt hàng không thành công! Vui lòng thử lại sau"})
+    return (jsonify({'message': result['message']}))
+
+
+@app.route('/api/staff/order', methods=['POST'])
+@serving_staff_required
+def staff_order():
+    customer = None
+    staff = None
+    if request.json:
+        order = request.json
+        if current_user.staff:
+            staff = current_user.staff
+
+    order_stats = utils.stats_cart(cart=order, configs=dao.get_configs())
+
+    result = dao.add_order(cart=order, customer=customer, staff=staff, total_price=order_stats['total_price'])
+
+    if result['result']:
+        if 'cart' in session:
+            del session['cart']
+        return jsonify({'message': result['message']})
+
+    return jsonify({'message': result['message']})
+
 
 @app.route('/cart')
 @customer_required
@@ -228,7 +246,8 @@ def cart():
     return render_template("cart.html")
 
 @app.route('/api/configs')
-def configs():
+@login_required
+def my_configs():
     return jsonify(dao.get_configs())
 
 @app.route('/staff/pay-confirm')
@@ -244,10 +263,18 @@ def create_order():
     products = dao.load_products()
     return render_template("staff/order.html", cates=cates, products=products)
 
+
+@app.route('/api/staff/pay/<int:id>', methods=['POST'])
+@cashier_required
+def pay_order(id):
+    print(id)
+    if dao.confirm_order(id):
+        return jsonify({'code': 200,'message': 'Thanh toán thành công!'})
+    return jsonify({'message': 'Thanh toán thất bại!'})
+
 @app.route('/about-us')
 def about():
     return render_template("about-us.html")
-
 
 @app.context_processor
 def common_attributes():

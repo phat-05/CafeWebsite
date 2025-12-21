@@ -5,7 +5,7 @@ from sqlalchemy import desc, func
 from sqlalchemy.exc import SQLAlchemyError
 
 from app import database
-from app.models import Category, Product, Account, Customer, OrderDetail, Configuration, Order, OrderStatus
+from app.models import Category, Product, Account, Customer, OrderDetail, Configuration, Order, OrderStatus, Ingredient, Recipe
 
 
 #hàm trả về tất cả danh mục đang lưu trong csdl
@@ -24,10 +24,10 @@ def load_products(category_id=None, keyword=None, sort=None):
         elif sort == "giá cao trước":
             query = query.order_by(desc(Product.price))
 
-        # elif sort == "mới nhất trước":
-        #     query = query.order_by(Product.created_date)
+    products = query.all()
+    products = [p for p in products if p.is_remaining()]
 
-    return query.all()
+    return products
 
 def get_user_by_id(id):
     return Account.query.get(int(id))
@@ -112,20 +112,33 @@ def add_order_detail(order_id, product_id, amount, note):
         }
 
 
-def add_order(cart, total_price, customer, staff=None):
+def add_order(cart, total_price, customer=None, staff=None):
     try:
-        customer_id = customer.id
-        created_date = datetime.now()
-        new_order = None
+        new_order = Order(
+            created_date=datetime.now(),
+            total_price=total_price
+        )
+
+        if customer:
+            new_order.customer_id = customer.id
         if staff:
-            staff_id = staff.id
-            new_order = Order(customer_id=customer_id, staff_id=staff_id , created_date=created_date, total_price=total_price)
-        else:
-            new_order = Order(customer_id=customer_id, created_date=created_date, total_price=total_price)
+            new_order.staff_id = staff.id
 
         database.session.add(new_order)
+
         for c in cart.values():
-            new_order_detail = OrderDetail(order=new_order, product_id=c['id'], amount=c['quantity'], note=c['note'] or '')
+            amount = int(c['quantity'])
+            product_id = int(c['id'])
+
+            new_order_detail = OrderDetail(
+                order=new_order,
+                product_id=product_id,
+                amount=amount
+            )
+
+            if 'note' in c:
+                new_order_detail.add_note(c['note'])
+
             database.session.add(new_order_detail)
 
         database.session.commit()
@@ -135,9 +148,11 @@ def add_order(cart, total_price, customer, staff=None):
             "message": "Đặt hàng thành công!"
         }
     except SQLAlchemyError as ex:
+        database.session.rollback()
+        print(f"Lỗi đặt hàng: {ex}")
         return {
             "result": None,
-            "message": "Tạo đơn hàng không thành công!"
+            "message": "Đặt hàng không thành công! Vui lòng thử lại sau."
         }
 
 def get_uncompleted_orders(customer_id=None):
@@ -146,15 +161,30 @@ def get_uncompleted_orders(customer_id=None):
         query = query.filter(Order.customer_id == customer_id)
     return query.order_by(desc(Order.created_date)).all()
 
+def update_ingredient(order_id):
+    order = Order.query.get(order_id)
+    for detail in order.order_details:
+        product_id = detail.product_id
+        quantity_sold = detail.amount
+        recipes = Recipe.query.filter_by(product_id=product_id).all()
+        for recipe in recipes:
+            total_amount_needed = recipe.amount * quantity_sold
+            ingredient = Ingredient.query.get(recipe.ingredient_id)
+            if ingredient:
+                ingredient.remaining = ingredient.remaining - total_amount_needed
+                database.session.add(ingredient)
 
 def confirm_order(order_id):
     try:
         order = Order.query.get(order_id)
         if order:
             order.status = OrderStatus.COMPLETED
+            update_ingredient(order.id)
             database.session.commit()
             return True
-    except Exception as ex:
+    except SQLAlchemyError:
         database.session.rollback()
-        print(ex)
     return False
+
+def load_low_stock_ingredients(warning_level=5):
+    return Ingredient.query.filter(Ingredient.remaining <= warning_level).all()
