@@ -20,10 +20,6 @@ body.login {
     border: #212529 !important;
 }
 
-/*.form-floating > label {*/
-/*    left: 0.5rem !important;*/
-/*}*/
-
 .about-title {
     background-image: url("https://res.cloudinary.com/dphz3ewhr/image/upload/v1765521024/about-title-bg_izvj4i.jpg");
 }
@@ -53,14 +49,6 @@ body.login {
     object-fit: cover;
 }
 
-/*.scrollspy-example .row:nth-of-type(even) img {*/
-/*    box-shadow: -2px 5px 5px gray;*/
-/*}*/
-
-/*.scrollspy-example .row:nth-of-type(odd) img {*/
-/*    box-shadow: 2px 5px 5px gray;*/
-/*}*/
-
 .cate-box:hover {
     border: solid 1px black !important;
 }
@@ -81,7 +69,7 @@ body.login {
 }
 
 .card img {
-    max-height: 15rem !important;
+    height: 15rem !important;
 }
 
 #btn-back-to-top {
@@ -104,4 +92,8 @@ body.login {
 }
 .offcanvas-backdrop {
     z-index: 1999 !important;
+}
+
+.card img {
+
 }

@@ -2,8 +2,7 @@ from datetime import datetime
 from enum import Enum as MyEnum
 
 from flask_login import UserMixin
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, Text, Enum, Boolean, DateTime, Null
-from sqlalchemy.ext.orderinglist import count_from_1
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, Text, Enum, Boolean, DateTime
 from sqlalchemy.orm import relationship
 
 from app import database, app
@@ -142,6 +141,9 @@ class OrderDetail(Base):
     def __str__(self):
         return f"{self.product.name} x {self.amount}"
 
+    def add_note(self, note):
+        self.note = note
+
 #class Danh mục(id, tên)
 class Category(Base):
     __tablename__ = 'categories'
@@ -163,6 +165,22 @@ class Product(Base):
 
     def __str__(self):
         return self.name
+
+    def is_remaining(self):
+        if not self.recipes:
+            return True
+
+        for recipe in self.recipes:
+
+            ingredient = recipe.ingredient
+
+            amount_needed = recipe.amount
+
+
+            if ingredient.remaining < amount_needed:
+                return False
+
+        return True
 
 class Configuration(Base):
     __tablename__ = 'configuration'

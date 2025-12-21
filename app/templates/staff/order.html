@@ -5,10 +5,13 @@
 {% block header %}{% endblock %}
 {% block footer %}{% endblock %}
 
+{% block script %}
+<script src="{{ url_for('static', filename = 'js/staff.js') }}"></script>
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid p-0 overflow-hidden vh-100 bg-light">
     <div class="row g-0 h-100">
-
         <div class="col-12 col-md-7 d-flex flex-column h-100 border-end">
 
             <div class="d-flex align-items-center">
@@ -26,7 +29,7 @@
                     <div class="col product-item" data-cate-id="{{ p.category_id }}" data-name="{{ p.name }}">
                         <div class="card h-100 product-card user-select-none"
                              style="cursor: pointer;"
-                             onclick="addToOrder({{ p.id }}, '{{ p.name }}', {{ p.price }})">
+                             onclick="addToOrder({{ p.id }}, '{{ p.name }}', {{ p.price }}, '{{ p.unit }}')">
                             <div class="position-relative">
                                 <img src="{{ p.image }}" class="card-img-top object-fit-cover"
                                      style="height: 130px;" alt="{{ p.name }}">
@@ -49,12 +52,13 @@
                 <i class="bi bi-receipt"></i> THÔNG TIN ĐƠN HÀNG
             </h5>
             <div class="card-body p-0 flex-grow-1 overflow-auto custom-scroll position-relative">
-                <table class="table table-hover align-middle mb-0">
+                <table class="table table-sm table-hover align-middle mb-0">
                     <thead class="table-light sticky-top ">
                     <tr class="small text-muted text-uppercase">
                         <th class="text-start">Tên món</th>
                         <th class="text-center">Giá</th>
                         <th class="text-center">SL</th>
+                        <th class="text-center">Đơn vị</th>
                         <th class="text-end pe-3">Tiền</th>
                     </tr>
                     </thead>
@@ -79,7 +83,7 @@
                 </div>
                 <div class="d-flex justify-content-between mb-3">
                     <span class="text-muted">Phí phục vụ:</span>
-                    <span class="text-dark fw-bold ser-fee-rate">0</span>
+                    <span class="text-dark fw-bold ser-fee-rate"></span>
                 </div>
                 <div class="d-flex justify-content-between mb-3">
                     <span class="text-muted">Tổng phí phục vụ:</span>
@@ -97,8 +101,8 @@
                         <i class="bi bi-trash"></i>HỦY
                     </button>
                     <button class="btn btn-info fw-bold w-100 py-2 shadow-sm text-uppercase" type="button"
-                            onclick="submitOrder()">
-                        <i class="bi bi-cash-stack me-2"></i> Thanh toán
+                            onclick="order()">
+                        <i class="bi bi-receipt me-2"></i> Đặt hàng
                     </button>
                 </div>
             </div>
