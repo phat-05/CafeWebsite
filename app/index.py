@@ -1,3 +1,4 @@
+import calendar
 import json
 
 from flask import render_template, request, redirect, jsonify, session
@@ -5,7 +6,7 @@ from flask_login import login_user, logout_user, current_user
 
 from app import app, dao, login, database, utils
 from app.decorator import anonymous_required, login_required, customer_required, cashier_required, \
-    serving_staff_required
+    serving_staff_required, admin_required
 from app.models import UserRole
 
 
@@ -16,7 +17,7 @@ def load_user(id):
 def index():
     with open("./static/data/banner.json") as f:
         banners = json.load(f)
-    popular_products = dao.get_popular_products(app.config["MAX_POPULAR_PRODUCTS_DISPLAY"])
+    popular_products = dao.load_best_sell_products(number=app.config["MAX_POPULAR_PRODUCTS_DISPLAY"])
     return render_template("index.html", banners=banners, popular_products=popular_products)
 
 @app.route('/menu', methods=['GET', 'POST'])
@@ -272,6 +273,71 @@ def pay_order(id):
         return jsonify({'code': 200,'message': 'Thanh toán thành công!'})
     return jsonify({'message': 'Thanh toán thất bại!'})
 
+
+########################################################################################################################
+############################################### THỐNG KÊ ###############################################################
+@app.route('/api/revenue', methods=['POST'])
+@admin_required
+def revenue_api():
+    time_type = request.json.get('type')
+    month = request.json.get('month')
+    year = request.json.get('year')
+
+    if month:
+        year = int(month.split('-')[0])
+        month = int(month.split('-')[1])
+
+    if year:
+        year = int(year)
+
+    print(month, year)
+
+    data = dao.stats_revenue(time_type, year, month)
+
+    labels = []
+    values = []
+
+    if time_type == 'Tháng':
+        _, num_days = calendar.monthrange(year, month)
+
+        stats_map = {int(item[0]): float(item[1]) for item in data}
+
+        for day in range(1, num_days + 1):
+            labels.append(f"Ngày {day}")
+            values.append(stats_map.get(day, 0))
+
+    if time_type == 'Năm':
+        stats_map = {int(item[0]): float(item[1]) for item in data}
+        for m in range(1, 13):
+            labels.append(f"Tháng {m}")
+            values.append(stats_map.get(m, 0))
+    print({'labels': labels, 'values': values})
+    return jsonify({'labels': labels, 'values': values})
+
+
+@app.route('/api/best-sell', methods=['POST'])
+def best_sell_api():
+    month = request.json.get('month')
+    year = None
+    if month:
+        year = int(month.split('-')[0])
+        month = int(month.split('-')[1])
+
+    data = dao.load_best_sell_products(year, month)
+
+    labels = [item[0].name for item in data]
+    values = [item[1] for item in data]
+
+    total = sum(values)
+    if total > 0:
+        values = [v / total * 100 for v in values]
+    else:
+        values = [0] * len(values)
+
+    return jsonify({'labels': labels, 'values': values})
+
+
+# __________________________________
 @app.route('/about-us')
 def about():
     return render_template("about-us.html")

@@ -63,7 +63,7 @@
                                 <h5 class="card-title text-truncate text-wrap text-primary">{{ p.name }}</h5>
                                 <div class="mt-auto">
                                     <p class="card-text fw-bolder text-center price">
-                                        {{ "{:,.0f}".format(p.price) }}đ
+                                        {{ "{:,.0f}".format(p.price|float) }}đ
                                     </p>
                                     <a href="javascipt:;" class="btn btn-outline-danger w-100"
                                        onclick="addToCart({{ p.id }}, '{{ p.name }}', '{{ p.image }}', {{ p.price }})">

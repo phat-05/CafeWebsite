@@ -232,7 +232,7 @@ class ConfigurationView(AdminView):
     #     return self.session.query(self.model).filter(self.model.key == 'SERVICE_FEE')
 
     def get_count_query(self):
-        return self.session.query(func.count('*')).filter(self.model.key == 'SERVICE_FEE')\
+        return self.session.query(func.count('*')).filter(self.model.key == 'SERVICE_FEE')
 
 class ImportStockView(BaseView):
     @expose('/', methods=['GET', 'POST'])
@@ -303,83 +303,69 @@ admin = Admin(
 admin.add_view(CategoryView(
     model=Category,
     session=database.session,
-    name="Danh mục",
-    category="Quản lý",
-    menu_icon_type='fa',
-    menu_icon_value='fa-tags'
+    name="🏷️ Danh mục",
+    category="Quản lý"
 ))
 
 admin.add_view(ProductView(
     model=Product,
     session=database.session,
-    name="Sản phẩm",
-    category="Quản lý",
-    menu_icon_type='fa',
-    menu_icon_value='fa-coffee'
+    name="🍹 Sản phẩm",
+    category="Quản lý"
 ))
 
 admin.add_view(CustomerView(
     model=Customer,
     session=database.session,
-    name="Khách hàng",
-    category="Quản lý",
-    menu_icon_type='fa',
-    menu_icon_value='fa-user'
+    name="🙋🏻‍♂️ Khách hàng",
+    category="Quản lý"
 ))
 
 admin.add_view(StaffView(
     model=Staff,
     session=database.session,
-    name="Nhân viên",
-    category="Quản lý",
-    menu_icon_type='fa',
-    menu_icon_value='fa-users'
+    name="👨🏻‍🍳 Nhân viên",
+    category="Quản lý"
 ))
 
 admin.add_view(IngredientView(
     model=Ingredient,
     session=database.session,
-    name="Nguyên liệu",
-    category="Quản lý",
-    menu_icon_type='fa',
-    menu_icon_value='fa-boxes-stacked'
+    name="🌿 Nguyên liệu",
+    category="Quản lý"
 ))
 
 admin.add_view(RecipeView(
     model=Recipe,
     session=database.session,
-    name="Công thức",
-    category="Quản lý",
-    menu_icon_type='fa',
-    menu_icon_value='fa-ruler'
+    name="📋 Công thức",
+    category="Quản lý"
 ))
 
 admin.add_view(OrderView(
     model=Order,
     session=database.session,
-    name="Đơn hàng",
-    category="Quản lý",
-    menu_icon_type='fa',
-    menu_icon_value='fa-file-invoice-dollar'
+    name="🧾 Đơn hàng",
+    category="Quản lý"
 ))
 
 admin.add_view(StatisticalView(
-    name="Thống kê",
+    name="📶 Thống kê",
     menu_icon_type='fa-solid',
     menu_icon_value='fa-chart-pie'
 ))
+
 admin.add_view(ConfigurationView(
     model=Configuration,
     session=database.session,
-    name=" Phí dịch vụ",
+    name="🛠️ Phí dịch vụ",
     category="Quản lý",
-    menu_icon_value = 'fas fa-wrench')
-)
-
-admin.add_view(ImportStockView(
-    name="Nhập kho nhanh",
-    menu_icon_type='fa',
-    menu_icon_value='fa-download'
 ))
 
-admin.add_view(MyLogOutView(name="Đăng xuất"))
+admin.add_view(ImportStockView(
+    name="📥 Nhập kho nhanh"
+))
+
+admin.add_view(MyLogOutView(
+    name="➜] Đăng xuất"
+))

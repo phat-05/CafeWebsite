@@ -3,12 +3,12 @@ from datetime import datetime
 
 from sqlalchemy import desc, func
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import query_expression
+from sqlalchemy.sql import FROM_LINTING
 
-from app import database
+from app import database, app
 from app.models import Category, Product, Account, Customer, OrderDetail, Configuration, Order, OrderStatus, Ingredient, Recipe
 
-
-#hàm trả về tất cả danh mục đang lưu trong csdl
 def load_categories():
     return Category.query.all()
 
@@ -76,13 +76,6 @@ def add_customer(name, phone, email, address, username, password):
             "result": None,
             "message": "Đăng ký không thành công! Vui lòng thử lại sau."
         }
-
-def get_popular_products(number = 8):
-    return database.session.query(Product, func.sum(OrderDetail.amount)) \
-        .join(OrderDetail, Product.id == OrderDetail.product_id) \
-        .group_by(Product.id) \
-        .order_by(func.sum(OrderDetail.amount).desc()) \
-        .limit(number).all()
 
 def get_configs():
     configs = {}
@@ -188,3 +181,88 @@ def confirm_order(order_id):
 
 def load_low_stock_ingredients(warning_level=5):
     return Ingredient.query.filter(Ingredient.remaining <= warning_level).all()
+
+
+
+#_________________________________
+
+
+def stats_revenue(time_type='Tháng',year=datetime.today().year, month=datetime.today().month):
+    if time_type == 'Tháng':
+        return database.session.query(func.extract('day', Order.created_date), func.sum(Order.total_price)).filter(
+            Order.status == OrderStatus.COMPLETED,
+            func.extract('year', Order.created_date) == year,
+            func.extract('month', Order.created_date) == month
+        ).group_by(
+            func.extract('day', Order.created_date),
+        ).order_by(
+            func.extract('day', Order.created_date),
+        ).all()
+
+    if time_type == 'Năm':
+        return database.session.query(func.extract('month', Order.created_date), func.sum(Order.total_price)).filter(
+            Order.status == OrderStatus.COMPLETED,
+            func.extract('year', Order.created_date) == year
+        ).group_by(
+            func.extract('month', Order.created_date),
+        ).order_by(
+            func.extract('month', Order.created_date),
+        ).all()
+
+    return None
+
+def load_best_sell_products(year = None, month = None, number = None):
+    query = database.session.query(
+        Product,
+        func.sum(OrderDetail.amount)
+    ).join(
+        OrderDetail,
+        Product.id == OrderDetail.product_id
+    ).join(
+        Order,
+        OrderDetail.order_id == Order.id
+    ).filter(
+        Order.status == OrderStatus.COMPLETED,
+    )
+
+
+    if year:
+        query = query.filter(func.extract('year', Order.created_date) == year)
+    if month:
+        query = query.filter(func.extract('month', Order.created_date) == month)
+
+    query = query.group_by(
+        Product.id,
+        Product.name
+    ).order_by(
+        func.sum(OrderDetail.amount).desc()
+    )
+
+    if number:
+        query = query.limit(number)
+
+    return query.all()
+
+########################################################################################################################
+def stats_products(year=2024, month=1):
+    return database.session.query(
+        Product.name,
+        func.sum(OrderDetail.amount)
+    ).join(
+        OrderDetail, OrderDetail.product_id == Product.id
+    ).join(
+        Order, OrderDetail.order_id == Order.id
+    ).filter(
+        Order.status == OrderStatus.COMPLETED,
+        func.extract('year', Order.created_date) == year,
+        func.extract('month', Order.created_date) == month
+    ).group_by(
+        Product.name
+    ).order_by(
+        func.sum(OrderDetail.amount).desc()
+    ).limit(5).all()
+
+#_________________________________
+if __name__ == '__main__':
+    with app.app_context():
+        print(load_best_sell_products(2025, 12))
