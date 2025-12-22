@@ -1,5 +1,5 @@
 import hashlib
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from sqlalchemy import desc, func
 from sqlalchemy.exc import SQLAlchemyError
@@ -243,6 +243,24 @@ def load_best_sell_products(year = None, month = None, number = None):
 
     return query.all()
 
+def stats_revenue_by_day(day=datetime.today()):
+    return database.session.query(
+        func.sum(Order.total_price),
+    ).filter(
+        Order.status == OrderStatus.COMPLETED,
+        func.date(Order.created_date) == day.date()
+    ).group_by(
+        func.date(Order.created_date)
+    ).scalar() or 0
+
+def get_total_order_by_day(day=datetime.today()):
+    return database.session.query(
+        func.count(Order.id)
+    ).filter(
+        func.date(Order.created_date) == day.date()
+    ).scalar() or 0
+
+
 ########################################################################################################################
 def stats_products(year=2024, month=1):
     return database.session.query(
@@ -265,4 +283,5 @@ def stats_products(year=2024, month=1):
 #_________________________________
 if __name__ == '__main__':
     with app.app_context():
-        print(load_best_sell_products(2025, 12))
+        #print(load_best_sell_products(2025, 12))
+        print(stats_revenue_by_day())

@@ -1,3 +1,5 @@
+from functools import total_ordering
+
 from flask import abort, redirect, request, flash
 from flask_admin import Admin, AdminIndexView, expose, BaseView
 from flask_admin.contrib.sqla import ModelView
@@ -24,7 +26,13 @@ class AdminView(ModelView):
 class MyAdminIndexView(AdminIndexView):
     @expose("/")
     def index(self) -> str:
-        return self.render("admin/index.html")
+        low_stock = dao.load_low_stock_ingredients(5)
+        low_stock_count = len(low_stock)
+        stats_day = dao.stats_revenue_by_day()
+        total_order = dao.get_total_order_by_day()
+        uncompleted_order = len(dao.get_uncompleted_orders())
+        return self.render("admin/index.html", low_stock_count=low_stock_count, stats_day=stats_day,
+                           total_order=total_order, uncompleted_order=uncompleted_order)
 
     def is_accessible(self):
         return current_user.is_authenticated and current_user.user_role == UserRole.ADMIN
@@ -38,6 +46,11 @@ class MyLogOutView(BaseView):
     def index(self) -> str:
         logout_user()
         return redirect("/login")
+
+class MyHomeView(BaseView):
+    @expose("/")
+    def index(self) -> str:
+        return redirect("/")
 
 
 class StatisticalView(BaseView):
@@ -195,9 +208,9 @@ class StaffView(AdminView):
 
     form_choices = {
         "position": [
-            (Position.MANAGER, "Quản lý"),
-            (Position.STAFF, "Nhân viên"),
-            (Position.CASHIER, "Thu ngân"),
+            (Position.MANAGER.name, "Quản lý"),
+            (Position.STAFF.name, "Nhân viên"),
+            (Position.CASHIER.name, "Thu ngân"),
         ]
     }
 
@@ -299,6 +312,8 @@ admin = Admin(
     index_view=MyAdminIndexView(),
     theme=Bootstrap4Theme(swatch='lux', fluid=True)
 )
+
+admin.add_view(MyHomeView(name="🏠 Về trang chủ"))
 
 admin.add_view(CategoryView(
     model=Category,

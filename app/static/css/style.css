@@ -68,10 +68,6 @@ body.login {
     min-height: 2.5rem;
 }
 
-.card img {
-    height: 15rem !important;
-}
-
 #btn-back-to-top {
     position: fixed !important;
     bottom: 1rem !important;
