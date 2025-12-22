@@ -1,143 +1,79 @@
 import random
 import hashlib
-from datetime import datetime
+from datetime import datetime, timedelta
 from faker import Faker
+
 from app import app, database
 from models import *
 
-fake = Faker('vi_VN')
+fake = Faker("vi_VN")
 
 
 def hash_md5(password):
-    return hashlib.md5(password.encode('utf-8')).hexdigest()
+    return hashlib.md5(password.encode("utf-8")).hexdigest()
 
 
 def seed_database():
-    print("=== SEED DATABASE (DATA THỰC TẾ) ===")
+    print("=== SEED DATABASE: 3000 ORDERS ===")
 
-    # ---------------- CONFIG ----------------
-    database.session.add_all([
-        Configuration(
-            key='SERVICE_FEE',
-            value='0.05',
-            description='Phí dịch vụ (%) cộng vào tổng hoá đơn'
-        ),
-        Configuration(
-            key='MAX_NUM_OF_ORDERS_ITEMS',
-            value='10',
-            description='Số lượng sản phẩm tối đa trong một hoá đơn'
-        ),
-        Configuration(
-            key='INGREDIENT_WARNING_LEVEL',
-            value='5',
-            description='Mức tồn kho nguyên liệu tối thiểu để cảnh báo'
-        )
-    ])
+    # ================= CONFIG =================
+    database.session.query(Configuration).delete()
 
-    # ---------------- CATEGORY ----------------
-    categories = {
-        "Cà phê": [],
-        "Trà sữa": [],
-        "Trà trái cây": [],
-        "Đá xay": [],
-        "Bánh ngọt": []
-    }
-
-    db_categories = {}
-    for name in categories:
-        cat = Category(name=name)
-        database.session.add(cat)
-        db_categories[name] = cat
-
-    database.session.commit()
-
-    # ---------------- INGREDIENT ----------------
-    ingredients = [
-        "Hạt Arabica", "Hạt Robusta", "Sữa tươi", "Sữa đặc",
-        "Trân châu", "Bột matcha", "Chocolate", "Kem cheese"
+    configs = [
+        Configuration(key="SERVICE_FEE", value="0.05", description="Phí dịch vụ 5%"),
+        Configuration(key="MAX_NUM_OF_ORDERS_ITEMS", value="10"),
+        Configuration(key="INGREDIENT_WARNING_LEVEL", value="5"),
     ]
+    database.session.add_all(configs)
 
-    db_ings = []
-    for name in ingredients:
+    # ================= CATEGORY =================
+    categories = []
+    for name in ["Cà phê", "Trà sữa", "Đá xay", "Bánh ngọt"]:
+        c = Category(name=name)
+        database.session.add(c)
+        categories.append(c)
+
+    # ================= INGREDIENT =================
+    ingredients = []
+    for name in ["Cafe hạt", "Sữa tươi", "Đường", "Trà đen", "Matcha"]:
         ing = Ingredient(
             name=name,
             unit="kg",
-            remaining=random.uniform(20, 100),
+            remaining=100,
             received_date=datetime.now()
         )
         database.session.add(ing)
-        db_ings.append(ing)
+        ingredients.append(ing)
 
     database.session.commit()
 
-    # ---------------- PRODUCT (ẢNH THẬT) ----------------
-    products_data = [
-        ("Cà phê sữa đá", 30000, "Cà phê",
-         "https://res.cloudinary.com/demo/image/upload/sample.jpg"),
-        ("Bạc xỉu", 32000, "Cà phê",
-         "https://res.cloudinary.com/demo/image/upload/sample.jpg"),
-        ("Trà sữa trân châu", 35000, "Trà sữa",
-         "https://res.cloudinary.com/demo/image/upload/sample.jpg"),
-        ("Trà đào cam sả", 40000, "Trà trái cây",
-         "https://res.cloudinary.com/demo/image/upload/sample.jpg"),
-        ("Matcha đá xay", 45000, "Đá xay",
-         "https://res.cloudinary.com/demo/image/upload/sample.jpg"),
-        ("Bánh tiramisu", 45000, "Bánh ngọt",
-         "https://res.cloudinary.com/demo/image/upload/sample.jpg"),
-    ]
+    # ================= ACCOUNT + STAFF =================
+    staffs = []
 
-    db_products = []
-    for name, price, cate, img in products_data:
-        prod = Product(
-            name=name,
-            unit="Ly" if cate != "Bánh ngọt" else "Cái",
-            price=price,
-            image=img,
-            category_id=db_categories[cate].id
-        )
-        database.session.add(prod)
-        db_products.append(prod)
-
-    database.session.commit()
-
-    # recipe
-    for prod in db_products:
-        for ing in random.sample(db_ings, k=2):
-            database.session.add(
-                Recipe(amount=0.1, ingredient_id=ing.id, product_id=prod.id)
-            )
-
-    database.session.commit()
-
-    # ---------------- ACCOUNT ----------------
-    # ADMIN = QUẢN LÝ
     admin_acc = Account(
         user_name="admin",
         password=hash_md5("123"),
-        user_role=UserRole.ADMIN,
-        status=True
+        user_role=UserRole.ADMIN
     )
     database.session.add(admin_acc)
     database.session.flush()
 
-    admin_staff = Staff(
-        name="Quản lý quán",
-        phone="0900000000",
-        email="admin@coffee.com",
-        position=Position.MANAGER,
-        salary=15000000,
-        account_id=admin_acc.id
+    database.session.add(
+        Staff(
+            name="Admin",
+            phone="0909999999",
+            email="admin@cafe.com",
+            position=Position.MANAGER,
+            salary=20000000,
+            account_id=admin_acc.id
+        )
     )
-    database.session.add(admin_staff)
 
-    # STAFF
-    staffs = []
-    for i in range(5):
+    for i in range(10):
         acc = Account(
             user_name=f"staff{i}",
             password=hash_md5("123"),
-            user_role=UserRole.STAFF,
-            status=True
+            user_role=UserRole.STAFF
         )
         database.session.add(acc)
         database.session.flush()
@@ -146,21 +82,20 @@ def seed_database():
             name=fake.name(),
             phone=fake.phone_number(),
             email=fake.email(),
-            position=Position.STAFF,
+            position=random.choice([Position.STAFF, Position.CASHIER]),
             salary=8000000,
             account_id=acc.id
         )
         database.session.add(st)
         staffs.append(st)
 
-    # CUSTOMER
+    # ================= CUSTOMER =================
     customers = []
-    for i in range(20):
+    for i in range(10):
         acc = Account(
             user_name=f"user{i}",
             password=hash_md5("123"),
-            user_role=UserRole.CUSTOMER,
-            status=True
+            user_role=UserRole.CUSTOMER
         )
         database.session.add(acc)
         database.session.flush()
@@ -177,37 +112,56 @@ def seed_database():
 
     database.session.commit()
 
-    # ---------------- ORDER ----------------
-    for _ in range(50):
-        cus = random.choice(customers)
-        st = random.choice(staffs)
+    # ================= PRODUCT =================
+    products = []
+    for i in range(100):  # nhiều món
+        cate = random.choice(categories) if random.random() > 0.25 else None
 
+        p = Product(
+            name=f"Món số {i}",
+            unit="Ly",
+            price=random.randint(20000, 70000),
+            category_id=cate.id if cate else None
+        )
+        database.session.add(p)
+        products.append(p)
+
+    database.session.commit()
+
+    # ================= ORDER =================
+    print("→ Đang tạo 3000 đơn hàng...")
+
+    for i in range(3000):
         order = Order(
-            created_date=datetime.now(),
+            created_date=datetime.now() - timedelta(days=random.randint(0, 365)),
             status=random.choice([OrderStatus.COMPLETED, OrderStatus.IN_PROGRESS]),
-            customer_id=cus.id,
-            staff_id=st.id
+            customer_id=random.choice(customers).id,
+            staff_id=random.choice(staffs).id
         )
         database.session.add(order)
         database.session.flush()
 
         total = 0
-        for prod in random.sample(db_products, k=random.randint(1, 3)):
-            qty = random.randint(1, 2)
+        for prod in random.sample(products, random.randint(1, 5)):
+            qty = random.randint(1, 3)
             database.session.add(
                 OrderDetail(
-                    amount=qty,
-                    note=random.choice(["", "Ít đá", "Ít ngọt"]),
                     order_id=order.id,
-                    product_id=prod.id
+                    product_id=prod.id,
+                    amount=qty,
+                    note=random.choice(["", "Ít đá", "Ít đường", "Mang về"])
                 )
             )
             total += prod.price * qty
 
-        order.total_price = total * 1.05  # có phí dịch vụ
+        order.total_price = total * 1.05
+
+        if i % 500 == 0 and i > 0:
+            database.session.commit()
+            print(f"  ✓ {i} orders")
 
     database.session.commit()
-    print("=== SEED HOÀN TẤT ===")
+    print("=== SEED THÀNH CÔNG ===")
 
 
 if __name__ == "__main__":

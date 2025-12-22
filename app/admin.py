@@ -1,11 +1,10 @@
-from functools import total_ordering
-
 from flask import abort, redirect, request, flash
 from flask_admin import Admin, AdminIndexView, expose, BaseView
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.theme import Bootstrap4Theme
 from flask_login import current_user, logout_user
 from markupsafe import Markup
+from pymysql import IntegrityError
 
 from app import database, app, dao
 from app.models import Category, Product, Ingredient, Recipe, Order, Customer, Staff, Position, OrderStatus, UserRole, Configuration
@@ -16,7 +15,6 @@ class AdminView(ModelView):
     page_size = 10
     edit_modal = True
     create_modal = True
-    can_view_details = True
     def is_accessible(self):
         return current_user.is_authenticated and current_user.user_role == UserRole.ADMIN
 
@@ -73,6 +71,8 @@ class ProductView(AdminView):
     column_searchable_list = ["name"]
     column_filters = ["id", "name", "category.name", "unit", "price"]
     can_export = True
+    can_create = False
+    can_delete = False
     form_columns = ["name", "category", "unit", "price", "image"]
 
     def format_image(view, context, model, name):
@@ -95,6 +95,20 @@ class CategoryView(AdminView):
     can_export = True
     form_columns = ["name", "products"]
 
+
+    def delete_model(self, model):
+        try:
+            if model.products:
+                raise Exception()
+            self.session.delete(model)
+            self.session.commit()
+            return True
+        except Exception:
+            self.session.rollback()
+            flash(f'Lỗi: Không thể xoá danh mục "{model.name}" vì vẫn còn các món ăn thuộc nhóm này. Hãy xoá hoặc chuyển danh mục cho các món đó trước!', 'error')
+            return False
+
+#done
 class IngredientView(AdminView):
     column_list = ("id", "name", "remaining", "received_date", "unit")
     column_labels = {
@@ -108,6 +122,9 @@ class IngredientView(AdminView):
     column_filters = ["id", "name", "remaining", "received_date", "unit"]
     form_excluded_columns = ["received_date", "recipes"]
     can_export = True
+    can_create = False
+    can_delete = False
+
 
     def format_remaining(view, context, model, name):
         qty = model.remaining
@@ -132,6 +149,7 @@ class IngredientView(AdminView):
 
         return super(IngredientView, self).index_view()
 
+#done
 class RecipeView(AdminView):
     column_list = ("id", "product", "ingredient", "amount")
     column_labels = {
@@ -146,7 +164,11 @@ class RecipeView(AdminView):
     form_columns = ["product", "ingredient", "amount"]
     column_searchable_list = ["product.name", "ingredient.name"]
     can_export = True
+    can_delete = False
+    can_edit = False
+    can_create = False
 
+#dône
 class OrderView(AdminView):
     column_list = ("id", "customer", "staff", "created_date", "order_details", "total_price", "status")
     column_labels = {
@@ -160,7 +182,7 @@ class OrderView(AdminView):
         "customer.name": "Tên khách hàng",
         "staff.name": "Tên nhân viên"
     }
-    can_edit = False
+    form_columns = ['status']
     can_create = False
     can_delete = False
     can_export = True
@@ -227,22 +249,24 @@ class StaffView(AdminView):
     }
 
     can_export = True
+    can_edit = False
+    can_create = False
+    can_delete = False
     column_filters = ["name", "phone", "email", "position"]
     column_searchable_list = ["name", "phone", "email", "position"]
-    form_columns = ["name", "phone", "email", "position", "salary"]
+    form_columns = ["name", "phone", "email", "position", "salary", "account"]
 
+#done
 class ConfigurationView(AdminView):
     column_list = ( "description", "value")
     column_labels = {
         "description": "Mô tả",
         "value": "Giá trị"
     }
+
     form_columns = ["value"]
     can_create = False
     can_delete = False
-
-    # def get_query(self):
-    #     return self.session.query(self.model).filter(self.model.key == 'SERVICE_FEE')
 
     def get_count_query(self):
         return self.session.query(func.count('*')).filter(self.model.key == 'SERVICE_FEE')
@@ -313,8 +337,6 @@ admin = Admin(
     theme=Bootstrap4Theme(swatch='lux', fluid=True)
 )
 
-admin.add_view(MyHomeView(name="🏠 Về trang chủ"))
-
 admin.add_view(CategoryView(
     model=Category,
     session=database.session,
@@ -380,6 +402,8 @@ admin.add_view(ConfigurationView(
 admin.add_view(ImportStockView(
     name="📥 Nhập kho nhanh"
 ))
+
+admin.add_view(MyHomeView(name="🏠 Về trang chủ"))
 
 admin.add_view(MyLogOutView(
     name="➜] Đăng xuất"

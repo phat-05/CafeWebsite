@@ -81,13 +81,21 @@ class Account(Base, UserMixin):
         return self.user_role == UserRole.CUSTOMER
 
     def is_staff(self):
-        return self.user_role == UserRole.STAFF and self.staff.position == Position.STAFF
+        if self.user_role == UserRole.STAFF:
+            if self.staff:
+                return self.staff.position == Position.STAFF
+            return False
+        return False
 
     def is_admin(self):
         return self.user_role == UserRole.ADMIN
 
     def is_cashier(self):
-        return self.user_role == UserRole.STAFF and self.staff.position == Position.CASHIER
+        if self.user_role == UserRole.STAFF:
+            if self.staff:
+                return self.staff.position == Position.CASHIER
+            return False
+        return False
 
 
 # class Nguyên liệu(id, tên, đơn vị, số lượng hiện tại, ngày nhập)
@@ -161,7 +169,7 @@ class Product(Base):
     price = Column(Float, default=0)
     image = Column(String(255), default='https://res.cloudinary.com/dphz3ewhr/image/upload/v1765821427/cup-hot_ow2zbf.svg')
 
-    category_id = Column(Integer, ForeignKey('categories.id'), nullable=False)
+    category_id = Column(Integer, ForeignKey('categories.id'))
 
     def __str__(self):
         return self.name
