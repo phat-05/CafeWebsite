@@ -158,15 +158,16 @@ async function order() {
 }
 
 function getUncompOrderById(obj) {
-    let id = obj.value.toLowerCase().trim()
+    let id = obj.value.trim()
+
     document.querySelectorAll('.uncomp-order').forEach(el => {
         el.classList.toggle(
             'd-none',
-            !el.dataset.id.toString().includes(id)
+            !el.dataset.id.includes(id)
         )
-        console.log(`${el.dataset.id.toString()} - ${id} - ${!el.dataset.id.toString() === id}`)
     })
 }
+
 
 async function payConfirm(id) {
     if (!(await myCustomAlert("Bạn có chắc muốn thanh toán đơn này?", true))) return

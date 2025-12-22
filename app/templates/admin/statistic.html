@@ -1,5 +1,265 @@
 {% extends 'admin/master.html' %}
 
 {% block body %}
-<p>Here I'm going to display some data.</p>
+<div class="container-fluid">
+    <h2 class="text-center">Thống kê doanh thu</h2>
+    <div class="row overflow">
+        <div class="col-md-7 card p-3">
+            <div class="card-title row gx-5">
+                <div class="col-12 col-md-6 ">
+                    <select class="form-control form-select" id="stats-type"
+                            onchange="choseStatsType(this)">
+                        <option>Tháng</option>
+                        <option>Năm</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-6">
+                    <input type="month" class="form-control form-select" placeholder="Chọn tháng"
+                           inputmode="numeric" min="1" max="12" id="stats-month" onchange="statsMonth(this)">
+                    <select class="form-control form-select d-none" id="stats-year" onchange="statsYear(this)">
+                        <option value="">Chọn năm</option>
+                        {% for year in range(2020, 2051, 1) %}
+                        <option>{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div style="height: 75vh;">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+        <div class="col-md-5 p-3 card">
+            <div class="card-title">
+                <input type="month" class="form-control form-select" placeholder="Chọn tháng"
+                       inputmode="numeric" min="1" max="12" id="stats-best-sell-month"
+                       onchange="statsBestSellByMonth(this)">
+            </div>
+            <div style="height: 75vh;">
+                <canvas id="bestSellChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        let revenueChart = null;
+        let bestSellChart = null;
+
+        function choseStatsType(obj) {
+            let type = obj.value;
+            let typeYear = document.getElementById('stats-year');
+            let typeMonth = document.getElementById('stats-month');
+
+            if (type === 'Tháng') {
+                typeYear.classList.add('d-none');
+                typeMonth.classList.remove('d-none');
+                return;
+            }
+            if (type === 'Năm') {
+                typeMonth.classList.add('d-none');
+                typeYear.classList.remove('d-none');
+                return;
+            }
+            typeMonth.classList.add('d-none');
+            typeYear.classList.add('d-none');
+        }
+
+        function statsMonth(obj) {
+            let type = document.getElementById('stats-type').value;
+
+            let request = {
+                "type": type,
+                "month": obj.value,
+            }
+
+            fetch('/api/revenue', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(request)
+            })
+                .then(res => res.json())
+                .then(data => {
+                    renderRevenueChart(data.labels, data.values);
+                });
+        }
+
+        function statsYear(obj) {
+            let type = document.getElementById('stats-type').value;
+
+            let request = {
+                "type": type,
+                "year": obj.value,
+            }
+
+            fetch('/api/revenue', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(request)
+            })
+                .then(res => res.json())
+                .then(data => {
+                    renderRevenueChart(data.labels, data.values);
+                });
+        }
+
+        function renderRevenueChart(labels, values) {
+            let type = document.getElementById('stats-type').value;
+            let title = ''
+
+            if (type === 'Tháng') {
+                title = document.getElementById('stats-month').value;
+                title = "tháng " + title.split('-')[1] + " năm " + title.split('-')[0];
+            }
+
+            if (type === 'Năm') {
+                title = document.getElementById('stats-year').value;
+                title = "năm " + title;
+            }
+
+            if (revenueChart) revenueChart.destroy();
+
+            let ctx = document.getElementById('revenueChart');
+
+            revenueChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Doanh thu',
+                        data: values,
+                        fill: true,
+                        tension: .4,
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `Biểu đồ doanh thu ${title}`,
+                            font: {
+                                size: 18,
+                                weight: 'bold'
+                            },
+                            padding: {
+                                top: 30,
+                                bottom: 30
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: c => c.raw.toLocaleString('vi-VN') + ' đ'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: {
+                                callback: v => v.toLocaleString('vi-VN') + ' đ'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function statsBestSellByMonth(obj) {
+            fetch('/api/best-sell', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    "month": obj.value
+                }),
+            }).then(res => res.json()).then(data => {
+                renderBestSellChart(data.labels, data.values);
+            });
+        }
+
+        function renderBestSellChart(labels, values) {
+            let title = ''
+
+            title = document.getElementById('stats-month').value;
+            title = "tháng " + title.split('-')[1] + " năm " + title.split('-')[0];
+
+
+            if (bestSellChart) bestSellChart.destroy();
+
+            let ctx = document.getElementById('bestSellChart');
+
+            bestSellChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'tỉ lệ: ',
+                        data: values,
+                        fill: true,
+                        tension: .4,
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `Biểu đồ tỉ lệ món bán chạy nhất ${title}`,
+                            font: {
+                                size: 18,
+                                weight: 'bold'
+                            },
+                            padding: {
+                                top: 30,
+                                bottom: 30
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: c => 'Tỉ lệ: ' + Math.round(c.raw, 2) + ' %'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        window.onload = function () {
+            let now = new Date();
+            let year = now.getFullYear();
+            let month = String(now.getMonth() + 1).padStart(2, '0');
+
+            let monthInput = document.getElementById('stats-month');
+            monthInput.value = `${year}-${month}`;
+
+            let monthInput2 = document.getElementById('stats-best-sell-month');
+            monthInput2.value = `${year}-${month}`;
+
+
+            fetch('/api/revenue', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    type: 'Tháng',
+                    month: monthInput.value
+                })
+            }).then(res => res.json()).then(data => {
+                renderRevenueChart(data.labels, data.values);
+            });
+
+            fetch('/api/best-sell', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    "month": monthInput2.value
+                }),
+            }).then(res => res.json()).then(data => {
+                renderBestSellChart(data.labels, data.values);
+            });
+        }
+    </script>
+</div>
 {% endblock %}

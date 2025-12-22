@@ -1,7 +1,10 @@
 from functools import wraps
+
 from flask import redirect, request, jsonify, render_template
 from flask_login import current_user
+
 from app.models import UserRole, Position  #
+
 
 def customer_required(f):
     @wraps(f)
@@ -67,7 +70,7 @@ def cashier_required(f):
     return decorated_func
 
 
-def customer_or_serving_staff_required(f):
+def admin_required(f):
     @wraps(f)
     def decorated_func(*args, **kwargs):
         if not current_user.is_authenticated:
@@ -75,21 +78,15 @@ def customer_or_serving_staff_required(f):
                 return jsonify({"message": "Vui lòng đăng nhập!"})
             return redirect('/login')
 
-        is_customer = current_user.user_role == UserRole.CUSTOMER
-        is_serving_staff = (
-                current_user.user_role == UserRole.STAFF and
-                current_user.staff and
-                current_user.staff.position == Position.STAFF
-        )
-
-        if not (is_customer or is_serving_staff):
+        if current_user.user_role != UserRole.ADMIN:
             if request.path.startswith('/api'):
-                return jsonify({"message": "Bạn không có quyền truy cập!"}), 403
+                return jsonify({"message": "Chức năng chỉ dành cho quản trị viên!"}), 403
             return render_template("forbidden.html"), 403
 
         return f(*args, **kwargs)
 
     return decorated_func
+
 
 def anonymous_required(f):
     @wraps(f)
